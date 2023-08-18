@@ -6,7 +6,7 @@ public class CommandParser {
         //TODO: lint tarzi sentaks kontrolu
         //StringTokenizer i +- icin sırayla recursive çalıştırarak islem yapılabili
         //parse tree lere bakılabilir
-        StringTokenizer st = new StringTokenizer(command, "+-");
+        StringTokenizer st = new StringTokenizer(command, "+-*/");
         while(st.hasMoreElements()) {
             if (!isTokenValid(st.nextToken())) {
                 return null;
