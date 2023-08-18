@@ -8,7 +8,7 @@ public class CommandParser {
         //parse tree lere bakılabilir
         StringTokenizer st = new StringTokenizer(command, "+-*/");
         while(st.hasMoreElements()) {
-            if (!isTokenValid(st.nextToken())) {
+            if (!isTokenValid(filterToken(st.nextToken()))) {
                 return null;
             }
         }
@@ -43,5 +43,9 @@ public class CommandParser {
 
     private static boolean isTokenExit(String token) {
         return token.toLowerCase().equals(Constants.COMMAND_EXIT);
+    }
+
+    private static String filterToken(String token) {
+        return token.trim();
     }
 }
