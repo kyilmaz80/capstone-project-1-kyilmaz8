@@ -19,4 +19,13 @@ public enum Operators {
     public boolean isOperatorPrior(Operators op) {
         return compareTo(op) > 0;
     }
+
+    public static Operators fromSymbol(String symbol) {
+        for (Operators op : Operators.values()) {
+            if (op.symbol.equalsIgnoreCase(symbol)) {
+                return op;
+            }
+        }
+        return null;
+    }
 }
