@@ -91,9 +91,13 @@ public class CommandParser {
                 operandsStack.push(tempOperands.pop());
             }
             */
-            if (tempOperandsStack.size() == 0 ) {
-                continue;
+            if (!opNotPrior) {
+                if (tempOperandsStack.size() == 0 ) {
+                    operandsStack.push(result);
+                    continue;
+                }
             }
+
             tempOperandsStack.push(result);
             while(!tempOperandsStack.isEmpty()) {
                 if (tempOperandsStack.size() == 1) {
