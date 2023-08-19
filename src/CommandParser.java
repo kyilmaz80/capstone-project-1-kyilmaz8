@@ -62,14 +62,21 @@ public class CommandParser {
             */
             //TODO: son 2 operatore bakmak gerekiyor
             op = operatorsStack.pop().toString();
+            Operators opEnum = Operators.fromSymbol(op);
             //String opNext = operatorsStack.pop().toString();
             //op = getPriorOperator(opCurrent, opNext);
-            if (!isOperatorPrior(op, operatorsStack) && opStackSize > 1) {
-                tempOperatorsStack.push(op);
-                tempOperandsStack.push(operandsStack.pop());
-                op = operatorsStack.pop().toString();
-                opNotPrior = true;
-                continue;
+            if (opStackSize > 1) {
+                String opNext = operatorsStack.pop().toString();
+                operatorsStack.push(opNext);
+                Operators opEnumNext = Operators.fromSymbol(opNext);
+                //if (!isOperatorPrior(op, operatorsStack) && opStackSize > 1) {
+                if (!opEnum.isOperatorPrior(opEnumNext) && opStackSize > 1) {
+                    tempOperatorsStack.push(op);
+                    tempOperandsStack.push(operandsStack.pop());
+                    //op = operatorsStack.pop().toString();
+                    opNotPrior = true;
+                    continue;
+                }
             }
 
             val1 = Double.valueOf(operandsStack.pop().toString());
@@ -84,19 +91,21 @@ public class CommandParser {
                 operandsStack.push(tempOperands.pop());
             }
             */
-            if (tempOperandsStack.size() == 0) {
-                break;
+            if (tempOperandsStack.size() == 0 ) {
+                continue;
             }
             tempOperandsStack.push(result);
             while(!tempOperandsStack.isEmpty()) {
-                if (tempOperatorsStack.isEmpty()) {
-                    result += Double.parseDouble(tempOperatorsStack.pop().toString());
+                if (tempOperandsStack.size() == 1) {
+                    result = Double.parseDouble(tempOperandsStack.pop().toString());
                     break;
                 }
 
                 val1 = Double.valueOf(tempOperandsStack.pop().toString());
                 val2 = Double.valueOf(tempOperandsStack.pop().toString());
-                result += doOperation(val1, val2, op);
+                op = tempOperatorsStack.pop().toString();
+                result = doOperation(val1, val2, op);
+                tempOperandsStack.push(result);
             }
 
         }
@@ -153,11 +162,12 @@ public class CommandParser {
         return Constants.DELIMITERS.indexOf(token) >= 0;
     }
 
+    /*
     private static boolean isOperatorPrior(String op1, Stack stack) {
         //return op.equals("*") || op.equals("/");
+
         return op1.equals(getPriorOperator(stack));
     }
-
 
     private static String getPriorOperator(String op1, String op2) {
         String op = op2;
@@ -171,7 +181,6 @@ public class CommandParser {
         return op;
     }
 
-
     private static String getPriorOperator(Stack stack) {
         String op1 = stack.pop().toString();
         String op2 = stack.pop().toString();
@@ -180,4 +189,5 @@ public class CommandParser {
         return getPriorOperator(op1, op2);
 
     }
+     */
 }
