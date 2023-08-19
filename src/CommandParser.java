@@ -31,42 +31,91 @@ public class CommandParser {
         double val1;
         double val2;
         double result = 0;
-        Stack temp = new Stack();
+        Stack tempOperandsStack = new Stack();
+        Stack tempOperatorsStack = new Stack();
+
         while(!operandsStack.isEmpty()) {
-            boolean opPrior = false;
+            boolean opNotPrior = false;
             if (operatorsStack.isEmpty()) {
                 result = Double.parseDouble(operandsStack.pop().toString());
                 break;
             }
             int opStackSize = operatorsStack.size();
+            /*
+            //buggy kisim
             op = operatorsStack.pop().toString();
             if (!isOperatorPrior(op) && opStackSize > 1) {
-                temp.push(operandsStack.pop());
-                temp.push(op);
-                op = operatorsStack.pop().toString();
-                opPrior = true;
+                String opNext = operatorsStack.pop().toString();
+                operatorsStack.push(opNext);
+                if (!isOperatorPrior(opNext)) {
+                    tempOperands.push(operandsStack.pop());
+                    tempOperands.push(operandsStack.pop());
+                    tempOperators.push(op);
+                    op = operatorsStack.pop().toString();
+                    opPrior = true;
+                }else {
+                    tempOperands.push(operandsStack.pop());
+                    tempOperators.push(op);
+                    op = operatorsStack.pop().toString();
+                }
             }
+            */
+            //TODO: son 2 operatore bakmak gerekiyor
+            op = operatorsStack.pop().toString();
+            //String opNext = operatorsStack.pop().toString();
+            //op = getPriorOperator(opCurrent, opNext);
+            if (!isOperatorPrior(op, operatorsStack) && opStackSize > 1) {
+                tempOperatorsStack.push(op);
+                tempOperandsStack.push(operandsStack.pop());
+                op = operatorsStack.pop().toString();
+                opNotPrior = true;
+                continue;
+            }
+
             val1 = Double.valueOf(operandsStack.pop().toString());
             val2 = Double.valueOf(operandsStack.pop().toString());
-            if (op.equals("*")) {
-                result = val2 * val1;
-            } else if (op.equals("/")) {
-                result = val2 / val1;
-            } else if (op.equals("+")) {
-                result = val2 + val1;
-            } else if (op.equals("-")) {
-                result = val2 - val1;
-            } else {
-                //TODO: pass
-                System.out.println("NOT IMPLEMENTED!");
-            }
+            result = doOperation(val1, val2, op);
+            /*
+            //buggy
             operandsStack.push(result);
             if (opPrior) {
-                operatorsStack.push(temp.pop());
-                operandsStack.push(temp.pop());
+                operatorsStack.push(tempOperators.pop());
+                operandsStack.push(tempOperands.pop());
+                operandsStack.push(tempOperands.pop());
+            }
+            */
+            if (tempOperandsStack.size() == 0) {
+                break;
+            }
+            tempOperandsStack.push(result);
+            while(!tempOperandsStack.isEmpty()) {
+                if (tempOperatorsStack.isEmpty()) {
+                    result += Double.parseDouble(tempOperatorsStack.pop().toString());
+                    break;
+                }
+
+                val1 = Double.valueOf(tempOperandsStack.pop().toString());
+                val2 = Double.valueOf(tempOperandsStack.pop().toString());
+                result += doOperation(val1, val2, op);
             }
 
+        }
+        return result;
+    }
 
+    private static double doOperation(double val1, double val2, String op) {
+        double result = -1;
+        if (op.equals("*")) {
+            result = val2 * val1;
+        } else if (op.equals("/")) {
+            result = val2 / val1;
+        } else if (op.equals("+")) {
+            result = val2 + val1;
+        } else if (op.equals("-")) {
+            result = val2 - val1;
+        } else {
+            //TODO: pass
+            System.out.println("NOT IMPLEMENTED!");
         }
         return result;
     }
@@ -104,7 +153,31 @@ public class CommandParser {
         return Constants.DELIMITERS.indexOf(token) >= 0;
     }
 
-    private static boolean isOperatorPrior(String op) {
-        return op.equals("*") || op.equals("/");
+    private static boolean isOperatorPrior(String op1, Stack stack) {
+        //return op.equals("*") || op.equals("/");
+        return op1.equals(getPriorOperator(stack));
+    }
+
+
+    private static String getPriorOperator(String op1, String op2) {
+        String op = op2;
+        if (op1.equals("*") && op2.equals("/")) {
+            op = op1;
+        } else if ((op1.equals("*") || op2.equals("/")) && (op1.equals("+") || op2.equals("-"))) {
+            op = op1;
+        }else if (op1.equals("+") && op2.equals("-")) {
+            op = op1;
+        }
+        return op;
+    }
+
+
+    private static String getPriorOperator(Stack stack) {
+        String op1 = stack.pop().toString();
+        String op2 = stack.pop().toString();
+        stack.push(op2);
+        stack.push(op1);
+        return getPriorOperator(op1, op2);
+
     }
 }
