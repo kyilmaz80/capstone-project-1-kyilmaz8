@@ -3,16 +3,13 @@ import java.util.Stack;
 import java.util.StringTokenizer;
 
 public class CommandParser {
-    private static Stack operatorsStack = new Stack();
-    private static Stack operandsStack = new Stack();
+    //private static Stack operatorsStack = new Stack();
+    //private static Stack operandsStack = new Stack();
     public static String parse(String command) {
-        //TODO: lint tarzi sentaks kontrolu
-        //StringTokenizer i +- icin sırayla recursive çalıştırarak islem yapılabili
-        //parse tree lere bakılabilir
+        /*
         StringTokenizer st = new StringTokenizer(command, Constants.DELIMITERS, true);
         while(st.hasMoreElements()) {
             String tokenString = filterToken(st.nextToken());
-            //TODO: operanda gelmişse pop layıp isle
             if (isTokenNumerical(tokenString)) {
                 operandsStack.push(tokenString);
             } else {
@@ -22,100 +19,65 @@ public class CommandParser {
                 return null;
             }
         }
-        return command;
+        */
+        return convertToPostfixExpression(command);
     }
 
     public static double execute(String command) {
         //TODO: komutun parse edilmis halinin hesabi
         String op;
-        double val1;
-        double val2;
         double result = 0;
-        Stack tempOperandsStack = new Stack();
-        Stack tempOperatorsStack = new Stack();
 
-        while(!operandsStack.isEmpty()) {
-            boolean opNotPrior = false;
-            if (operatorsStack.isEmpty()) {
-                result = Double.parseDouble(operandsStack.pop().toString());
-                break;
-            }
-            int opStackSize = operatorsStack.size();
-            /*
-            //buggy kisim
-            op = operatorsStack.pop().toString();
-            if (!isOperatorPrior(op) && opStackSize > 1) {
-                String opNext = operatorsStack.pop().toString();
-                operatorsStack.push(opNext);
-                if (!isOperatorPrior(opNext)) {
-                    tempOperands.push(operandsStack.pop());
-                    tempOperands.push(operandsStack.pop());
-                    tempOperators.push(op);
-                    op = operatorsStack.pop().toString();
-                    opPrior = true;
-                }else {
-                    tempOperands.push(operandsStack.pop());
-                    tempOperators.push(op);
-                    op = operatorsStack.pop().toString();
-                }
-            }
-            */
-            //TODO: son 2 operatore bakmak gerekiyor
-            op = operatorsStack.pop().toString();
-            Operators opEnum = Operators.fromSymbol(op);
-            //String opNext = operatorsStack.pop().toString();
-            //op = getPriorOperator(opCurrent, opNext);
-            if (opStackSize > 1) {
-                String opNext = operatorsStack.pop().toString();
-                operatorsStack.push(opNext);
-                Operators opEnumNext = Operators.fromSymbol(opNext);
-                //if (!isOperatorPrior(op, operatorsStack) && opStackSize > 1) {
-                if (!opEnum.isOperatorPrior(opEnumNext) && opStackSize > 1) {
-                    tempOperatorsStack.push(op);
-                    tempOperandsStack.push(operandsStack.pop());
-                    //op = operatorsStack.pop().toString();
-                    opNotPrior = true;
-                    continue;
-                }
-            }
-
-            val1 = Double.valueOf(operandsStack.pop().toString());
-            val2 = Double.valueOf(operandsStack.pop().toString());
-            result = doOperation(val1, val2, op);
-            /*
-            //buggy
-            operandsStack.push(result);
-            if (opPrior) {
-                operatorsStack.push(tempOperators.pop());
-                operandsStack.push(tempOperands.pop());
-                operandsStack.push(tempOperands.pop());
-            }
-            */
-            if (!opNotPrior) {
-                if (tempOperandsStack.size() == 0 ) {
-                    operandsStack.push(result);
-                    continue;
-                }
-            }
-
-            tempOperandsStack.push(result);
-            while(!tempOperandsStack.isEmpty()) {
-                if (tempOperandsStack.size() == 1) {
-                    result = Double.parseDouble(tempOperandsStack.pop().toString());
-                    break;
-                }
-
-                val1 = Double.valueOf(tempOperandsStack.pop().toString());
-                val2 = Double.valueOf(tempOperandsStack.pop().toString());
-                op = tempOperatorsStack.pop().toString();
-                result = doOperation(val1, val2, op);
-                tempOperandsStack.push(result);
-            }
-
-        }
         return result;
     }
 
+    private static String convertToPostfixExpression(String infixExpression) {
+        StringBuilder sb = new StringBuilder();
+        StringTokenizer st = new StringTokenizer(infixExpression, Constants.DELIMITERS, true);
+        Stack<String> stack = new Stack<String>();
+        while(st.hasMoreElements()) {
+            String tokenString = filterToken(st.nextToken());
+            if (isTokenOperand(tokenString)) {
+                sb.append(tokenString);
+            } else {
+                // token is operator
+                if (stack.isEmpty()) {
+                    stack.push(tokenString);
+                } else {
+                    //check top element
+                    //rule highest priority operators like to be on top
+                    //^ -> highest, */ -> next priority, +- lowest priority
+                    //no two operator of same priority can stay together
+                    //pop the top from stack to postfix, then push item
+                    String opOnStack = stack.pop().toString();
+                    Operators opOnStackOperator = Operators.fromSymbol(opOnStack);
+                    Operators tokenOperator = Operators.fromSymbol(tokenString);
+                    if (opOnStackOperator.isOperatorHighestPriorityFrom(tokenOperator) ||
+                        opOnStackOperator.isOperatorSamePriorityTo(tokenOperator)) {
+                        //rule: highest priority must be on top!
+                        //we have to pop from stack to postfix expression
+                        //then push it
+                        //since we already popped it
+                        //rule: no same priority operators stay together
+                        sb.append(tokenString);
+
+                    } else {
+                        stack.push(opOnStack);
+                        //push back the popped element
+                    }
+                    stack.push(tokenString);
+                }
+            }
+        }
+        // add the operators to postfix expression
+        while (!stack.isEmpty()) {
+            sb.append(stack.pop());
+        }
+
+        System.out.println(sb.toString());
+
+        return sb.toString();
+    }
     private static double doOperation(double val1, double val2, String op) {
         double result = -1;
         if (op.equals("*")) {
@@ -125,7 +87,7 @@ public class CommandParser {
         } else if (op.equals("+")) {
             result = val2 + val1;
         } else if (op.equals("-")) {
-            result = val2 - val1;
+            result = val1 - val2;
         } else {
             //TODO: pass
             System.out.println("NOT IMPLEMENTED!");
@@ -133,6 +95,9 @@ public class CommandParser {
         return result;
     }
 
+    private static boolean isTokenOperand(String str) {
+        return isTokenNumerical(str) || isTokenMathFunction(str);
+    }
     private static boolean isTokenNumerical(String str) {
         if (str.equals("") || str == null) {
             return false;
@@ -166,32 +131,4 @@ public class CommandParser {
         return Constants.DELIMITERS.indexOf(token) >= 0;
     }
 
-    /*
-    private static boolean isOperatorPrior(String op1, Stack stack) {
-        //return op.equals("*") || op.equals("/");
-
-        return op1.equals(getPriorOperator(stack));
-    }
-
-    private static String getPriorOperator(String op1, String op2) {
-        String op = op2;
-        if (op1.equals("*") && op2.equals("/")) {
-            op = op1;
-        } else if ((op1.equals("*") || op2.equals("/")) && (op1.equals("+") || op2.equals("-"))) {
-            op = op1;
-        }else if (op1.equals("+") && op2.equals("-")) {
-            op = op1;
-        }
-        return op;
-    }
-
-    private static String getPriorOperator(Stack stack) {
-        String op1 = stack.pop().toString();
-        String op2 = stack.pop().toString();
-        stack.push(op2);
-        stack.push(op1);
-        return getPriorOperator(op1, op2);
-
-    }
-     */
 }
