@@ -6,20 +6,6 @@ public class CommandParser {
     //private static Stack operatorsStack = new Stack();
     //private static Stack operandsStack = new Stack();
     public static String parse(String command) {
-        /*
-        StringTokenizer st = new StringTokenizer(command, Constants.DELIMITERS, true);
-        while(st.hasMoreElements()) {
-            String tokenString = filterToken(st.nextToken());
-            if (isTokenNumerical(tokenString)) {
-                operandsStack.push(tokenString);
-            } else {
-                operatorsStack.push(tokenString);
-            }
-            if (!isTokenValid(filterToken(tokenString))) {
-                return null;
-            }
-        }
-        */
         return convertToPostfixExpression(command);
     }
 
@@ -69,7 +55,7 @@ public class CommandParser {
                 }
             }
         }
-        // add the operators to postfix expression
+        // add the remaining operators to postfix expression
         while (!stack.isEmpty()) {
             sb.append(stack.pop());
         }
