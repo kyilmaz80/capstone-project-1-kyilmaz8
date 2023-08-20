@@ -50,6 +50,8 @@ public class CommandParser {
                     //no two operator of same priority can stay together
                     //pop the top from stack to postfix, then push item
                     String opOnStack = stack.pop().toString();
+                    //push back
+                    stack.push(opOnStack);
                     Operators opOnStackOperator = Operators.fromSymbol(opOnStack);
                     Operators tokenOperator = Operators.fromSymbol(tokenString);
                     if (opOnStackOperator.isOperatorHighestPriorityFrom(tokenOperator) ||
@@ -59,13 +61,11 @@ public class CommandParser {
                         //then push it
                         //since we already popped it
                         //rule: no same priority operators stay together
-                        sb.append(tokenString);
-
+                        sb.append(stack.pop());
+                        stack.push(tokenString);
                     } else {
-                        stack.push(opOnStack);
-                        //push back the popped element
+                        stack.push(tokenString);
                     }
-                    stack.push(tokenString);
                 }
             }
         }
@@ -73,8 +73,6 @@ public class CommandParser {
         while (!stack.isEmpty()) {
             sb.append(stack.pop());
         }
-
-        System.out.println(sb.toString());
 
         return sb.toString();
     }
