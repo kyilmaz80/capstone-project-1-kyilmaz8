@@ -1,15 +1,15 @@
 public class TestCommandParser {
     public static void main(String[] args) {
-        //test1();
-        //test2();
+        test1();
+        test2();
         test3();
     }
 
     public static void test1() {
-        assert CommandParser.parse("5+6*7").equals("567*+");
-        assert CommandParser.parse("5*6+7").equals("56*7+");
-        assert CommandParser.parse("5/4*3+2").equals("54/3*2+");
-        assert CommandParser.parse("5/4-3*2").equals("54/32*-");
+        assert CommandParser.parse("5+6*7").equals("5 6 7 * +");
+        assert CommandParser.parse("5*6+7").equals("5 6 * 7 +");
+        assert CommandParser.parse("5/4*3+2").equals("5 4 / 3 * 2 +");
+        assert CommandParser.parse("5/4-3*2").equals("5 4 / 3 2 * -");
     }
 
     public static void test2() {
@@ -20,6 +20,14 @@ public class TestCommandParser {
     }
 
     public static void test3() {
-        assert CommandParser.parse("5*4+cos(0)").equals("54*cos0+");
+        assert CommandParser.execute(CommandParser.parse("5*4+cos(0)")) == 21.0;
+        //assert CommandParser.execute(CommandParser.parse("5*4+cos(0)*5")) == 25.0;
+        //String exp = CommandParser.parse("5*4+sqrt(cos(0)*25)");
+        //System.out.println(exp);
+        //assert CommandParser.execute() == 25.0;
+        String postfix = CommandParser.parse("5*6+7");
+        System.out.println(postfix);
+        Double val = CommandParser.execute(postfix);
+        System.out.println(val);
     }
 }
