@@ -19,13 +19,22 @@ public class CommandParser {
         Stack<Double> stack = new Stack<>();
         String tokenString;
         Operators operator;
-        for(char tokenChar: postfixExpression.toCharArray()) {
-            tokenString = String.valueOf(tokenChar);
-            operator = Operators.fromSymbol(tokenString);
-            if (isTokenOperand(tokenString)) {
+        StringTokenizer st = new StringTokenizer(postfixExpression, Constants.DELIMITERS, true);
+        //for(char tokenChar: postfixExpression.toCharArray()) {
+        while(st.hasMoreElements()) {
+            tokenString = filterToken(st.nextToken());
+            if (tokenString.isEmpty()) {
+                continue;
+            }
+            if (isTokenMathFunction(tokenString)) {
+               //TODO
+                System.out.println("NOT IMPLEMENTED");
+
+            } else if (isTokenOperand(tokenString)) {
                 stack.push(Double.valueOf(tokenString));
             } else {
                 // token is operator
+                operator = Operators.fromSymbol(tokenString);
                 Double val1 = stack.pop();
                 Double val2 = stack.pop();
                 if (operator == null) {
@@ -50,7 +59,7 @@ public class CommandParser {
                 return null;
             }
             if (isTokenOperand(tokenString)) {
-                sb.append(tokenString);
+                sb.append(tokenString.concat(Constants.WHITESPACE));
             } else {
                 // token is operator
                 if (stack.isEmpty()) {
@@ -75,7 +84,7 @@ public class CommandParser {
                         Operators operator = Operators.fromSymbol(element);
                         while(operator != Operators.LEFT_PARENTHESES) {
                             element = stack.pop();
-                            sb.append(element);
+                            sb.append(element.concat(Constants.WHITESPACE));
                             operator = Operators.fromSymbol(element);
                         }
                         stack.pop();
@@ -89,7 +98,7 @@ public class CommandParser {
                         //then push it
                         //since we already popped it
                         //rule: no same priority operators stay together
-                        sb.append(stack.pop());
+                        sb.append(stack.pop().concat(Constants.WHITESPACE));
                         stack.push(tokenString);
                     } else {
                         stack.push(tokenString);
@@ -99,10 +108,10 @@ public class CommandParser {
         }
         // add the remaining operators to postfix expression
         while (!stack.isEmpty()) {
-            sb.append(stack.pop());
+            sb.append(stack.pop().concat(Constants.WHITESPACE));
         }
 
-        return sb.toString();
+        return sb.toString().trim();
     }
     private static double doOperation(double val1, double val2, Operators op) {
         double result = -1;
@@ -116,16 +125,17 @@ public class CommandParser {
         return result;
     }
 
-    private static double doCalculateFunction(String funcStr) {
+    private static double doCalculateFunction(String funcStr, Double[] args) {
         double result = -1;
-        String[] funcArray = funcStr.split("\\(");
-        String func = funcArray[0].toLowerCase();
-        Double val = Double.valueOf(funcArray[1]);
-        switch(func) {
-            case "cos" -> result = Math.cos(val);
-            case "sin" -> result = Math.sin(val);
-            //case "pow" ->
-            //TODO:
+        //String[] funcArray = funcStr.split("\\(");
+        //String func = funcArray[0].toLowerCase();
+        //Double val = Double.valueOf(funcs);
+        switch(funcStr) {
+            case "cos" -> result = Math.cos(args[0]);
+            case "sin" -> result = Math.sin(args[0]);
+            case "pow" -> result = Math.pow(args[1], args[0]);
+            case "sqrt" -> result = Math.sqrt(args[0]);
+            default -> System.out.println("NOT IMPLEMENTED!");
         }
         return result;
         //return Arrays.binarySearch(Constants.ALLOWED_MATH_FUNCTIONS, funcArray[0].toLowerCase()) >= 0;
@@ -133,6 +143,10 @@ public class CommandParser {
 
     private static boolean isTokenOperand(String str) {
         return isTokenNumerical(str) || isTokenMathFunction(str);
+    }
+
+    private static boolean isTokenAlphabetic(char ch) {
+        return Character.isAlphabetic(ch);
     }
     private static boolean isTokenNumerical(String str) {
         if (str.equals("")) {
