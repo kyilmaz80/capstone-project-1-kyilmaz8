@@ -8,7 +8,6 @@ public class CommandParser {
     }
 
     public static double execute(String postfixExpression) {
-        //TODO: komutun parse edilmis postfix halinin hesabi
         double result;
         // read the expression from left to right
         // push the element in to a stack if it is operand
