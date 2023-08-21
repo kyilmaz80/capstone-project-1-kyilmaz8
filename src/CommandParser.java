@@ -61,11 +61,33 @@ public class CommandParser {
                     //^ -> highest, */ -> next priority, +- lowest priority
                     //no two operator of same priority can stay together
                     //pop the top from stack to postfix, then push item
+
                     String opOnStack = stack.pop();
                     //push back
                     stack.push(opOnStack);
                     Operators opOnStackOperator = Operators.fromSymbol(opOnStack);
                     Operators tokenOperator = Operators.fromSymbol(tokenString);
+                    if (tokenOperator == Operators.RIGHT_PARENTHESES) {
+                        // If the token is a Right Parenthesis, pop operators off the stack onto the
+                        // output string builder until the token at the top of the stack is a left parenthesis.
+                        // Then pop the left parenthesis from the stack, but not onto the output string builder.
+                        String element = stack.peek();
+                        Operators operator = Operators.fromSymbol(element);
+                        while(operator != Operators.LEFT_PARENTHESES) {
+                            element = stack.pop();
+                            sb.append(element);
+                        }
+                        stack.pop();
+                        continue;
+                    }
+                    /*
+                    // test case 5*4+cos(0) OK
+                    if (opOnStackOperator == Operators.LEFT_PARENTHESES && tokenOperator == Operators.RIGHT_PARENTHESES) {
+                        stack.pop();
+                        sb.append(stack.pop());
+                        continue;
+                    }
+                     */
                     if (opOnStackOperator.isOperatorHighestPriorityFrom(tokenOperator) ||
                         opOnStackOperator.isOperatorSamePriorityTo(tokenOperator)) {
                         //rule: highest priority must be on top!
@@ -100,6 +122,21 @@ public class CommandParser {
         return result;
     }
 
+    private static double doCalculateFunction(String funcStr) {
+        double result = -1;
+        String[] funcArray = funcStr.split("\\(");
+        String func = funcArray[0].toLowerCase();
+        Double val = Double.valueOf(funcArray[1]);
+        switch(func) {
+            case "cos" -> result = Math.cos(val);
+            case "sin" -> result = Math.sin(val);
+            //case "pow" ->
+            //TODO:
+        }
+        return result;
+        //return Arrays.binarySearch(Constants.ALLOWED_MATH_FUNCTIONS, funcArray[0].toLowerCase()) >= 0;
+    }
+
     private static boolean isTokenOperand(String str) {
         return isTokenNumerical(str) || isTokenMathFunction(str);
     }
@@ -116,6 +153,9 @@ public class CommandParser {
     }
 
     private static boolean isTokenMathFunction(String str) {
+        if (str.length() == 1) {
+            return false;
+        }
         String[] funcArray = str.split("\\(");
         return Arrays.binarySearch(Constants.ALLOWED_MATH_FUNCTIONS, funcArray[0].toLowerCase()) >= 0;
     }
