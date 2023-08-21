@@ -76,18 +76,12 @@ public class CommandParser {
                         while(operator != Operators.LEFT_PARENTHESES) {
                             element = stack.pop();
                             sb.append(element);
+                            operator = Operators.fromSymbol(element);
                         }
                         stack.pop();
                         continue;
                     }
-                    /*
-                    // test case 5*4+cos(0) OK
-                    if (opOnStackOperator == Operators.LEFT_PARENTHESES && tokenOperator == Operators.RIGHT_PARENTHESES) {
-                        stack.pop();
-                        sb.append(stack.pop());
-                        continue;
-                    }
-                     */
+
                     if (opOnStackOperator.isOperatorHighestPriorityFrom(tokenOperator) ||
                         opOnStackOperator.isOperatorSamePriorityTo(tokenOperator)) {
                         //rule: highest priority must be on top!
