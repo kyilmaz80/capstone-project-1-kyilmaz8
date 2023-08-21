@@ -4,16 +4,12 @@ public enum Operators {
     MULTIPLICATION("*", 2),
     DIVISION("/", 2);
 
-    private String symbol;
-    private int no;
+    private final String symbol;
+    private final int no;
 
     Operators(String symbol, int no) {
         this.symbol = symbol;
         this.no = no;
-    }
-
-    public String getSymbol() {
-        return this.symbol;
     }
 
     public boolean isOperatorHighestPriorityFrom(Operators op) {
