@@ -7,10 +7,9 @@ public class CommandParser {
         return convertToPostfixExpression(command);
     }
 
-    public static double execute(String command) {
+    public static double execute(String postfixExpression) {
         //TODO: komutun parse edilmis postfix halinin hesabi
-        String postfixExpression = command;
-        double result = 0;
+        double result;
         // read the expression from left to right
         // push the element in to a stack if it is operand
         // if the current character is an operator,
@@ -18,17 +17,23 @@ public class CommandParser {
         //   evaluate it
         //   push back the result of the evaluation
         // repeat until the end of the expression
-        Stack<Double> stack = new Stack<Double>();
+        Stack<Double> stack = new Stack<>();
         String tokenString;
+        Operators operator;
         for(char tokenChar: postfixExpression.toCharArray()) {
-            tokenString = "" + tokenChar;
+            tokenString = String.valueOf(tokenChar);
+            operator = Operators.fromSymbol(tokenString);
             if (isTokenOperand(tokenString)) {
                 stack.push(Double.valueOf(tokenString));
             } else {
                 // token is operator
                 Double val1 = stack.pop();
                 Double val2 = stack.pop();
-                result = doOperation(val1, val2, Operators.fromSymbol(tokenString));
+                if (operator == null) {
+                    System.err.println("Operator null geldi!");
+                    System.exit(1);
+                }
+                result = doOperation(val1, val2, operator);
                 stack.push(result);
             }
         }
@@ -38,9 +43,13 @@ public class CommandParser {
     private static String convertToPostfixExpression(String infixExpression) {
         StringBuilder sb = new StringBuilder();
         StringTokenizer st = new StringTokenizer(infixExpression, Constants.DELIMITERS, true);
-        Stack<String> stack = new Stack<String>();
+        Stack<String> stack = new Stack<>();
         while(st.hasMoreElements()) {
             String tokenString = filterToken(st.nextToken());
+            if (!isTokenValid(tokenString)) {
+                System.err.println(tokenString + " token i beklenmedik!");
+                return null;
+            }
             if (isTokenOperand(tokenString)) {
                 sb.append(tokenString);
             } else {
@@ -53,7 +62,7 @@ public class CommandParser {
                     //^ -> highest, */ -> next priority, +- lowest priority
                     //no two operator of same priority can stay together
                     //pop the top from stack to postfix, then push item
-                    String opOnStack = stack.pop().toString();
+                    String opOnStack = stack.pop();
                     //push back
                     stack.push(opOnStack);
                     Operators opOnStackOperator = Operators.fromSymbol(opOnStack);
@@ -96,7 +105,7 @@ public class CommandParser {
         return isTokenNumerical(str) || isTokenMathFunction(str);
     }
     private static boolean isTokenNumerical(String str) {
-        if (str.equals("") || str == null) {
+        if (str.equals("")) {
             return false;
         }
         try {
@@ -117,7 +126,7 @@ public class CommandParser {
     }
 
     private static boolean isTokenExit(String token) {
-        return token.toLowerCase().equals(Constants.COMMAND_EXIT);
+        return token.equalsIgnoreCase(Constants.COMMAND_EXIT);
     }
 
     private static String filterToken(String token) {
@@ -125,6 +134,6 @@ public class CommandParser {
     }
     
     private static boolean isTokenDelimiter(String token) {
-        return Constants.DELIMITERS.indexOf(token) >= 0;
+        return Constants.DELIMITERS.contains(token);
     }
 }
