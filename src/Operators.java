@@ -2,18 +2,22 @@ public enum Operators {
     ADDITION("+",1),
     SUBTRACTION("-", 1),
     MULTIPLICATION("*", 2),
-    DIVISION("/", 2);
+    DIVISION("/", 2),
+    LEFT_PARENTHESES("(", 3),
+    RIGHT_PARENTHESES(")", 3);
 
     private final String symbol;
-    private final int no;
+    private final int priority;
 
-    Operators(String symbol, int no) {
+    Operators(String symbol, int priority) {
         this.symbol = symbol;
-        this.no = no;
+        this.priority = priority;
     }
 
     public boolean isOperatorHighestPriorityFrom(Operators op) {
-
+        if (op == null) {
+            return false;
+        }
         if (op.equals(Operators.MULTIPLICATION) && this.equals(Operators.DIVISION)) {
             return false;
         } else if (op.equals(Operators.ADDITION) && this.equals(Operators.SUBTRACTION)) {
@@ -24,7 +28,7 @@ public enum Operators {
     }
 
     public boolean isOperatorSamePriorityTo(Operators op) {
-        return op.no == this.no;
+        return op.priority == this.priority;
     }
     public static Operators fromSymbol(String symbol) {
         for (Operators op : Operators.values()) {
@@ -34,4 +38,5 @@ public enum Operators {
         }
         return null;
     }
+
 }
