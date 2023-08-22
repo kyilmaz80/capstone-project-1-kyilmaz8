@@ -10,7 +10,7 @@ public class Main {
                 continue;
             }
             Menu.printOutput();
-            double result = CommandParser.execute(parsedCommand);
+            double result = CommandParser.eval(parsedCommand);
             System.out.println(result);
         } while (!command.equals(Constants.COMMAND_EXIT));
         Menu.exit();
