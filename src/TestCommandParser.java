@@ -1,7 +1,7 @@
 public class TestCommandParser {
     public static void main(String[] args) {
-        test1();
-        test2();
+        //test1();
+        //test2();
         test3();
     }
 
@@ -21,13 +21,17 @@ public class TestCommandParser {
 
     public static void test3() {
         assert CommandParser.execute(CommandParser.parse("5*4+cos(0)")) == 21.0;
-        //assert CommandParser.execute(CommandParser.parse("5*4+cos(0)*5")) == 25.0;
-        //String exp = CommandParser.parse("5*4+sqrt(cos(0)*25)");
-        //System.out.println(exp);
-        //assert CommandParser.execute() == 25.0;
-        String postfix = CommandParser.parse("5*6+7");
-        System.out.println(postfix);
-        Double val = CommandParser.execute(postfix);
-        System.out.println(val);
+        assert CommandParser.execute(CommandParser.parse("5*4+cos(0)*5")) == 25.0;
+
+        String exp = CommandParser.parse("5*4+sqrt(cos(0)*25)");
+        System.out.println(exp);
+        Double res = CommandParser.execute(exp);
+        System.out.println(res);
+        //5 4 * sqrt cos 0 25 * +
+        //assert CommandParser.execute(exp) == 25.0;
+        //String postfix = CommandParser.parse("5*6+7");
+        //System.out.println(postfix);
+        //Double val = CommandParser.execute(postfix);
+        //System.out.println(val);
     }
 }
