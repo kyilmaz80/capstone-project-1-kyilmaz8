@@ -32,8 +32,8 @@ public class CommandParser {
                 if(!stack.isEmpty() && isTokenMathFunction(stack.peek())) {
                     //single valued variable icin
                     String funcStr = stack.pop();
-                    Double val = Double.valueOf(tokenString);
-                    result = doCalculateFunction(funcStr, new Double[]{val});
+                    double val = Double.parseDouble(tokenString);
+                    result = doCalculateFunction(funcStr, new double[]{val});
                     stack.push(String.valueOf(result));
                 }else {
                     stack.push(tokenString);
@@ -42,17 +42,17 @@ public class CommandParser {
             } else {
                 // token is operator
                 operator = Operators.fromSymbol(tokenString);
-                Double val1 = Double.valueOf(stack.pop());
+                double val1 = Double.parseDouble(stack.pop());
                 if (isTokenMathFunction(stack.peek())) {
                     String funcStr = stack.pop();
-                    Double val = Double.valueOf(val1);
-                    result = doCalculateFunction(funcStr, new Double[]{val});
+                    double val = val1;
+                    result = doCalculateFunction(funcStr, new double[]{val});
                     stack.push(String.valueOf(result));
                     //TODO: multi-valued func?
-                    val1 = Double.valueOf(stack.pop());
+                    val1 = Double.parseDouble(stack.pop());
                 }
 
-                Double val2 = Double.valueOf(stack.pop());
+                double val2 = Double.parseDouble(stack.pop());
                 if (operator == null) {
                     System.err.println("Operator null geldi!");
                     System.exit(1);
@@ -61,7 +61,7 @@ public class CommandParser {
                 stack.push(String.valueOf(result));
             }
         }
-        return Double.valueOf(stack.pop());
+        return Double.parseDouble(stack.pop());
     }
 
     private static String convertToPostfixExpression(String infixExpression) {
@@ -162,11 +162,11 @@ public class CommandParser {
         return result;
     }
 
-    private static double doCalculateFunction(String funcStr, Double[] args) {
+    private static double doCalculateFunction(String funcStr, double[] args) {
         double result = -1;
         //String[] funcArray = funcStr.split("\\(");
         //String func = funcArray[0].toLowerCase();
-        //Double val = Double.valueOf(funcs);
+        //double val = double.valueOf(funcs);
         switch(funcStr) {
             case "cos" -> result = Math.cos(args[0]);
             case "sin" -> result = Math.sin(args[0]);
@@ -194,9 +194,6 @@ public class CommandParser {
         return isTokenNumerical(str) || isTokenMathFunction(str);
     }
 
-    private static boolean isTokenAlphabetic(char ch) {
-        return Character.isAlphabetic(ch);
-    }
     private static boolean isTokenNumerical(String str) {
         if (str.equals("")) {
             return false;
