@@ -90,28 +90,9 @@ public class CommandParser {
                     //no two operator of same priority can stay together
                     //pop the top from stack to postfix, then push item
 
-                    //String opOnStack = stack.pop();
                     String opOnStack = stack.peek();
-                    //push back
-                    //stack.push(opOnStack);
                     Operators opOnStackOperator = Operators.fromSymbol(opOnStack);
                     Operators tokenOperator = Operators.fromSymbol(tokenString);
-                    /*
-                    if (tokenOperator == Operators.RIGHT_PARENTHESES) {
-                        // If the token is a Right Parenthesis, pop operators off the stack onto the
-                        // output string builder until the token at the top of the stack is a left parenthesis.
-                        // Then pop the left parenthesis from the stack, but not onto the output string builder.
-                        String element = stack.peek();
-                        Operators operator = Operators.fromSymbol(element);
-                        while(operator != Operators.LEFT_PARENTHESES) {
-                            element = stack.pop();
-                            sb.append(element.concat(Constants.WHITESPACE));
-                            operator = Operators.fromSymbol(element);
-                        }
-                        stack.pop();
-                        continue;
-                    }
-                     */
                     if (tokenOperator == Operators.RIGHT_PARENTHESES) {
                         Operators topOperator = Operators.fromSymbol(stack.peek());
                         while(topOperator == Operators.LEFT_PARENTHESES ) {
@@ -120,7 +101,6 @@ public class CommandParser {
                                 return null;
                             }
                             stack.pop();
-                            //sb.append(stack.pop().concat(Constants.WHITESPACE));
                             topOperator = Operators.fromSymbol(stack.peek());
                         }
                         continue;
