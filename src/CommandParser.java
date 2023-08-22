@@ -1,4 +1,3 @@
-import javax.print.Doc;
 import java.util.Arrays;
 import java.util.Stack;
 import java.util.StringTokenizer;
@@ -19,7 +18,6 @@ public class CommandParser {
         // repeat until the end of the expression
         Stack<String> stack = new Stack<>();
         String tokenString = null;
-        Operators operator;
         StringTokenizer st = new StringTokenizer(postfixExpression, Constants.DELIMITERS, true);
         //for(char tokenChar: postfixExpression.toCharArray()) {
         while(st.hasMoreElements()) {
@@ -77,7 +75,6 @@ public class CommandParser {
                  */
                 String funcStr = doGetFuncNameOnStack(stack);
                 String topElementNext = "";
-                int varCount;
 
                 //no func before operator!
                 //pow case
@@ -253,8 +250,7 @@ public class CommandParser {
         double val2 = Double.parseDouble(stack.pop());
 
         Operators operator = Operators.fromSymbol(tokenString);
-        double result = doOperation(val1, val2, operator);
-        return result;
+        return doOperation(val1, val2, operator);
         //stack.push(String.valueOf(result));
     }
 
@@ -263,13 +259,12 @@ public class CommandParser {
         int varCount = getFunctionArgCount(funcStr);
         double[] vals = new double[varCount];
         for(int i = 0; i < varCount; i++) {
-            vals[i] = Double.valueOf(stack.pop());
+            vals[i] = Double.parseDouble(stack.pop());
         }
-        double result = doCalculateFunction(funcStr, vals);
         //disregard the func
         //stack.pop();
         //stack.push(String.valueOf(result));
-        return result;
+        return doCalculateFunction(funcStr, vals);
     }
 
     private static String doGetFuncNameOnStack(Stack<String> stack) {
