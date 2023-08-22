@@ -4,7 +4,8 @@ public enum Operators {
     MULTIPLICATION("*", 2),
     DIVISION("/", 2),
     LEFT_PARENTHESES("(", -1),
-    RIGHT_PARENTHESES(")", -1);
+    RIGHT_PARENTHESES(")", -1),
+    FUNC_VARIABLE_COMMA(",", -2);
 
     private final String symbol;
     private final int priority;
