@@ -47,14 +47,6 @@ public class CommandParser {
                     result = doFuncOperationOnStack(stack, funcStr);
                     stack.pop();
                     stack.push(String.valueOf(result));
-
-                    /*
-                    String funcStr = stack.pop();
-                    double val = Double.parseDouble(tokenString);
-                    result = doCalculateFunction(funcStr, new double[]{val});
-                    stack.push(String.valueOf(result));
-
-                     */
                 }else {
                     stack.push(tokenString);
                 }
@@ -62,17 +54,6 @@ public class CommandParser {
             } else {
                 // token is operator
                 // if the two elements on stack are operands
-                /*
-                String topElement = stack.pop();
-                String topElementNext = stack.pop();
-                String topElementNext2 = "";
-                if (!stack.isEmpty() || stack.size() > 2) {
-                    topElementNext2 = stack.pop();
-                    stack.push(topElementNext2);
-                }
-                stack.push(topElementNext);
-                stack.push(topElement);
-                 */
                 String funcStr = doGetFuncNameOnStack(stack);
                 String topElementNext = "";
 
@@ -91,14 +72,6 @@ public class CommandParser {
                 }
                 //may be func before before operator
                 if (isTokenMathFunction(topElementNext)) {
-                    /*
-                    varCount = getFunctionArgCount(topElementNext);
-                    double[] vals = new double[varCount];
-                    for(int i = 0; i < varCount; i++) {
-                        vals[i] = Double.valueOf(stack.pop());
-                    }
-                    result = doCalculateFunction(topElementNext, vals);
-                     */
                     result = doFuncOperationOnStack(stack, topElementNext);
                     //disregard the func
                     stack.pop();
@@ -114,29 +87,6 @@ public class CommandParser {
                     }
                     stack.push(String.valueOf(result));
                 }
-                /*
-                operator = Operators.fromSymbol(tokenString);
-                String topElement = stack.pop();
-                double val1, val2;
-
-                if (isTokenMathFunction(stack.peek())) {
-                    String funcStr = stack.pop();
-                    double val = Double.parseDouble(topElement);
-                    result = doCalculateFunction(funcStr, new double[]{val});
-                    stack.push(String.valueOf(result));
-                    //TODO: multi-valued func?
-                    val1 = Double.parseDouble(stack.pop());
-                }
-                val1 = Double.parseDouble(topElement);
-                val2 = Double.parseDouble(stack.pop());
-                if (operator == null) {
-                    System.err.println("Operator null geldi!");
-                    System.exit(1);
-                }
-                result = doOperation(val1, val2, operator);
-                stack.push(String.valueOf(result));
-
-                 */
             }
         }
         while(stack.size() != 1) {
