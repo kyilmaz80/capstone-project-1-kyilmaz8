@@ -59,6 +59,9 @@ public class CommandParser {
                 return null;
             }
             if (isTokenOperand(tokenString)) {
+                if (tokenString.equalsIgnoreCase("(")) {
+                    System.out.println("csdcd");
+                }
                 sb.append(tokenString.concat(Constants.WHITESPACE));
             } else {
                 // token is operator
@@ -71,11 +74,13 @@ public class CommandParser {
                     //no two operator of same priority can stay together
                     //pop the top from stack to postfix, then push item
 
-                    String opOnStack = stack.pop();
+                    //String opOnStack = stack.pop();
+                    String opOnStack = stack.peek();
                     //push back
-                    stack.push(opOnStack);
+                    //stack.push(opOnStack);
                     Operators opOnStackOperator = Operators.fromSymbol(opOnStack);
                     Operators tokenOperator = Operators.fromSymbol(tokenString);
+                    /*
                     if (tokenOperator == Operators.RIGHT_PARENTHESES) {
                         // If the token is a Right Parenthesis, pop operators off the stack onto the
                         // output string builder until the token at the top of the stack is a left parenthesis.
@@ -90,14 +95,30 @@ public class CommandParser {
                         stack.pop();
                         continue;
                     }
+                     */
+                    if (tokenOperator == Operators.RIGHT_PARENTHESES) {
+                        Operators topOperator = Operators.fromSymbol(stack.peek());
+                        while(topOperator == Operators.LEFT_PARENTHESES ) {
+                            if (stack.isEmpty()) {
+                                System.err.println("Mismatched parentheses problem!");
+                                return null;
+                            }
+                            stack.pop();
+                            //sb.append(stack.pop().concat(Constants.WHITESPACE));
+                            topOperator = Operators.fromSymbol(stack.peek());
+                        }
+                        continue;
+                    }
 
-                    if (opOnStackOperator.isOperatorHighestPriorityFrom(tokenOperator) ||
-                        opOnStackOperator.isOperatorSamePriorityTo(tokenOperator)) {
+                    if ((opOnStackOperator.isOperatorHighestPriorityFrom(tokenOperator) ||
+                        opOnStackOperator.isOperatorSamePriorityTo(tokenOperator)) && opOnStackOperator != tokenOperator) {
+
                         //rule: highest priority must be on top!
                         //we have to pop from stack to postfix expression
                         //then push it
                         //since we already popped it
                         //rule: no same priority operators stay together
+
                         sb.append(stack.pop().concat(Constants.WHITESPACE));
                         stack.push(tokenString);
                     } else {
