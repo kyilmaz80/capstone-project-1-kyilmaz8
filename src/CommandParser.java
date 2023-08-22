@@ -16,7 +16,7 @@ public class CommandParser {
         //   evaluate it
         //   push back the result of the evaluation
         // repeat until the end of the expression
-        Stack<Double> stack = new Stack<>();
+        Stack<String> stack = new Stack<>();
         String tokenString;
         Operators operator;
         StringTokenizer st = new StringTokenizer(postfixExpression, Constants.DELIMITERS, true);
@@ -27,25 +27,41 @@ public class CommandParser {
                 continue;
             }
             if (isTokenMathFunction(tokenString)) {
-               //TODO
-                System.out.println("NOT IMPLEMENTED");
-
+                stack.push(tokenString);
             } else if (isTokenOperand(tokenString)) {
-                stack.push(Double.valueOf(tokenString));
+                if(!stack.isEmpty() && isTokenMathFunction(stack.peek())) {
+                    //single valued variable icin
+                    String funcStr = stack.pop();
+                    Double val = Double.valueOf(tokenString);
+                    result = doCalculateFunction(funcStr, new Double[]{val});
+                    stack.push(String.valueOf(result));
+                }else {
+                    stack.push(tokenString);
+                }
+
             } else {
                 // token is operator
                 operator = Operators.fromSymbol(tokenString);
-                Double val1 = stack.pop();
-                Double val2 = stack.pop();
+                Double val1 = Double.valueOf(stack.pop());
+                if (isTokenMathFunction(stack.peek())) {
+                    String funcStr = stack.pop();
+                    Double val = Double.valueOf(val1);
+                    result = doCalculateFunction(funcStr, new Double[]{val});
+                    stack.push(String.valueOf(result));
+                    //TODO: multi-valued func?
+                    val1 = Double.valueOf(stack.pop());
+                }
+
+                Double val2 = Double.valueOf(stack.pop());
                 if (operator == null) {
                     System.err.println("Operator null geldi!");
                     System.exit(1);
                 }
                 result = doOperation(val1, val2, operator);
-                stack.push(result);
+                stack.push(String.valueOf(result));
             }
         }
-        return stack.pop();
+        return Double.valueOf(stack.pop());
     }
 
     private static String convertToPostfixExpression(String infixExpression) {
@@ -160,6 +176,18 @@ public class CommandParser {
         }
         return result;
         //return Arrays.binarySearch(Constants.ALLOWED_MATH_FUNCTIONS, funcArray[0].toLowerCase()) >= 0;
+    }
+
+    private static int getFunctionArgCount(String funcStr) {
+        int result = 0;
+        switch(funcStr) {
+            case "cos" -> result = 1;
+            case "sin" -> result = 1;
+            case "pow" -> result = 2;
+            case "sqrt" -> result = 1;
+            default -> System.out.println("NOT IMPLEMENTED!");
+        }
+        return result;
     }
 
     private static boolean isTokenOperand(String str) {
