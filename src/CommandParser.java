@@ -1,3 +1,4 @@
+import javax.print.Doc;
 import java.util.Arrays;
 import java.util.Stack;
 import java.util.StringTokenizer;
@@ -17,7 +18,7 @@ public class CommandParser {
         //   push back the result of the evaluation
         // repeat until the end of the expression
         Stack<String> stack = new Stack<>();
-        String tokenString;
+        String tokenString = null;
         Operators operator;
         StringTokenizer st = new StringTokenizer(postfixExpression, Constants.DELIMITERS, true);
         //for(char tokenChar: postfixExpression.toCharArray()) {
@@ -31,35 +32,123 @@ public class CommandParser {
             } else if (isTokenOperand(tokenString)) {
                 if(!stack.isEmpty() && isTokenMathFunction(stack.peek())) {
                     //single valued variable icin
+                    String funcStr = stack.peek();
+                    if(getFunctionArgCount(funcStr) == 2) {
+                        stack.push(tokenString);
+                        continue;
+                    }
+
+                    if (isLastTwoFuncOnStack(stack)) {
+                        //nested func case
+                        stack.push(tokenString);
+                    }
+                    //push back val for func
+                    if (isTokenMathFunction(stack.peek())) {
+                        stack.push(tokenString);
+                    }
+                    result = doFuncOperationOnStack(stack, funcStr);
+                    stack.pop();
+                    stack.push(String.valueOf(result));
+
+                    /*
                     String funcStr = stack.pop();
                     double val = Double.parseDouble(tokenString);
                     result = doCalculateFunction(funcStr, new double[]{val});
                     stack.push(String.valueOf(result));
+
+                     */
                 }else {
                     stack.push(tokenString);
                 }
 
             } else {
                 // token is operator
+                // if the two elements on stack are operands
+                /*
+                String topElement = stack.pop();
+                String topElementNext = stack.pop();
+                String topElementNext2 = "";
+                if (!stack.isEmpty() || stack.size() > 2) {
+                    topElementNext2 = stack.pop();
+                    stack.push(topElementNext2);
+                }
+                stack.push(topElementNext);
+                stack.push(topElement);
+                 */
+                String funcStr = doGetFuncNameOnStack(stack);
+                String topElementNext = "";
+                int varCount;
+
+                //no func before operator!
+                //pow case
+                if (isTokenMathFunction(funcStr) && getFunctionArgCount(funcStr) == 2) {
+                    //double valued func case
+                    //System.err.println("NOT IMPLEMENTED");
+                    //call by ref!remember! stack!
+                    result = doFuncOperationOnStack(stack, funcStr);
+                    //pop the func
+                    stack.pop();
+                    //push result
+                    stack.push(String.valueOf(result));
+                    topElementNext = stack.peek();
+                }
+                //may be func before before operator
+                if (isTokenMathFunction(topElementNext)) {
+                    /*
+                    varCount = getFunctionArgCount(topElementNext);
+                    double[] vals = new double[varCount];
+                    for(int i = 0; i < varCount; i++) {
+                        vals[i] = Double.valueOf(stack.pop());
+                    }
+                    result = doCalculateFunction(topElementNext, vals);
+                     */
+                    result = doFuncOperationOnStack(stack, topElementNext);
+                    //disregard the func
+                    stack.pop();
+                    stack.push(String.valueOf(result));
+                } else {
+                    if (isOperationOnStackFunc(stack)) {
+                        funcStr = doGetFuncNameOnStack(stack);
+                        result = doFuncOperationOnStack(stack, funcStr);
+                        //pop the func
+                        stack.pop();
+                    } else {
+                        result = doArithmeticOperationOnStack(stack, tokenString);
+                    }
+                    stack.push(String.valueOf(result));
+                }
+                /*
                 operator = Operators.fromSymbol(tokenString);
-                double val1 = Double.parseDouble(stack.pop());
+                String topElement = stack.pop();
+                double val1, val2;
+
                 if (isTokenMathFunction(stack.peek())) {
                     String funcStr = stack.pop();
-                    double val = val1;
+                    double val = Double.parseDouble(topElement);
                     result = doCalculateFunction(funcStr, new double[]{val});
                     stack.push(String.valueOf(result));
                     //TODO: multi-valued func?
                     val1 = Double.parseDouble(stack.pop());
                 }
-
-                double val2 = Double.parseDouble(stack.pop());
+                val1 = Double.parseDouble(topElement);
+                val2 = Double.parseDouble(stack.pop());
                 if (operator == null) {
                     System.err.println("Operator null geldi!");
                     System.exit(1);
                 }
                 result = doOperation(val1, val2, operator);
                 stack.push(String.valueOf(result));
+
+                 */
             }
+        }
+        while(stack.size() != 1) {
+            if (isOperationOnStackArithmetic(stack)) {
+                result = doArithmeticOperationOnStack(stack, tokenString);
+            } else {
+                result = doFuncOperationOnStack(stack, tokenString);
+            }
+            stack.push(String.valueOf(result));
         }
         return Double.parseDouble(stack.pop());
     }
@@ -137,7 +226,7 @@ public class CommandParser {
             case DIVISION -> result = val2 / val1;
             case ADDITION -> result = val2 + val1;
             case SUBTRACTION -> result = val2 - val1;
-            default -> System.out.println("NOT IMPLEMENTED!");
+            default -> System.out.println("ARITHMETIC OP NOT IMPLEMENTED!");
         }
         return result;
     }
@@ -152,14 +241,86 @@ public class CommandParser {
             case "sin" -> result = Math.sin(args[0]);
             case "pow" -> result = Math.pow(args[1], args[0]);
             case "sqrt" -> result = Math.sqrt(args[0]);
-            default -> System.out.println("NOT IMPLEMENTED!");
+            default -> System.out.println("FUNC NOT IMPLEMENTED!");
         }
         return result;
         //return Arrays.binarySearch(Constants.ALLOWED_MATH_FUNCTIONS, funcArray[0].toLowerCase()) >= 0;
     }
 
+    private static double doArithmeticOperationOnStack(Stack<String> stack, String tokenString) {
+        double val1 = Double.parseDouble(stack.pop());
+        //can be operand or func
+        double val2 = Double.parseDouble(stack.pop());
+
+        Operators operator = Operators.fromSymbol(tokenString);
+        double result = doOperation(val1, val2, operator);
+        return result;
+        //stack.push(String.valueOf(result));
+    }
+
+    private static double doFuncOperationOnStack(Stack<String> stack, String funcStr) {
+
+        int varCount = getFunctionArgCount(funcStr);
+        double[] vals = new double[varCount];
+        for(int i = 0; i < varCount; i++) {
+            vals[i] = Double.valueOf(stack.pop());
+        }
+        double result = doCalculateFunction(funcStr, vals);
+        //disregard the func
+        //stack.pop();
+        //stack.push(String.valueOf(result));
+        return result;
+    }
+
+    private static String doGetFuncNameOnStack(Stack<String> stack) {
+        String topElement = stack.pop();
+        String topElementNext = stack.pop();
+        String topElementNext2 = "";
+        if (!stack.isEmpty() || stack.size() > 2) {
+            topElementNext2 = stack.pop();
+            stack.push(topElementNext2);
+        }
+        stack.push(topElementNext);
+        stack.push(topElement);
+
+        if (isTokenMathFunction(topElement)) {
+            return topElement;
+        } else if (isTokenMathFunction(topElementNext)) {
+            return topElementNext;
+        } else if (isTokenMathFunction(topElementNext2)) {
+            return topElementNext2;
+        } else {
+            //System.err.println("Stack overflow for function search!");
+            return null;
+        }
+    }
+
+    private static boolean isLastTwoFuncOnStack(Stack<String> stack) {
+        String op1 = stack.pop();
+        String op2 = stack.pop();
+        stack.push(op2);
+        stack.push(op1);
+
+        return isTokenMathFunction(op1) && isTokenMathFunction(op2);
+    }
+    private static boolean isOperationOnStackArithmetic(Stack<String> stack) {
+        String val1 = stack.pop();
+        String val2 = stack.pop();
+        stack.push(val2);
+        stack.push(val1);
+
+        return isTokenNumerical(val1) && isTokenNumerical(val2);
+    }
+
+    private static boolean isOperationOnStackFunc(Stack<String> stack) {
+        return !isOperationOnStackArithmetic(stack);
+    }
+
     private static int getFunctionArgCount(String funcStr) {
         int result = 0;
+        if (funcStr.equalsIgnoreCase("") || funcStr == null) {
+            return -1;
+        }
         switch(funcStr) {
             case "cos" -> result = 1;
             case "sin" -> result = 1;
@@ -187,7 +348,7 @@ public class CommandParser {
     }
 
     private static boolean isTokenMathFunction(String str) {
-        if (str.length() == 1) {
+        if (str == null || str.length() <= 1) {
             return false;
         }
         String[] funcArray = str.split("\\(");
