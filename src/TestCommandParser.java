@@ -1,8 +1,8 @@
 public class TestCommandParser {
     public static void main(String[] args) {
-        //test1();
-        //test2();
-        //test3();
+        test1();
+        test2();
+        test3();
         test4();
     }
 
@@ -29,7 +29,7 @@ public class TestCommandParser {
         Double res = CommandParser.eval(exp);
         System.out.println(res);
         //5 4 * sqrt cos 0 25 * +
-        //assert CommandParser.eval(exp) == 25.0;
+        assert CommandParser.eval(exp) == 25.0;
         //String postfix = CommandParser.parse("5*6+7");
         //System.out.println(postfix);
         //Double val = CommandParser.eval(postfix);
@@ -40,6 +40,9 @@ public class TestCommandParser {
         String exp = CommandParser.parse("5*4+sqrt(pow(5,2))");
         System.out.println(exp);
         assert CommandParser.parse("5*4+sqrt(pow(5,2))").equals("5 4 * sqrt pow 5 2 +");
-
+        Double res =  CommandParser.eval(exp);
+        System.out.println(res);
+        //5 4 * sqrt cos 0 25 * +
+        //5 4 * sqrt pow 5 2 +
     }
 }
