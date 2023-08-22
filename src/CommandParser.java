@@ -7,7 +7,7 @@ public class CommandParser {
         return convertToPostfixExpression(command);
     }
 
-    public static double execute(String postfixExpression) {
+    public static double eval(String postfixExpression) {
         double result;
         // read the expression from left to right
         // push the element in to a stack if it is operand
@@ -75,9 +75,6 @@ public class CommandParser {
                 return null;
             }
             if (isTokenOperand(tokenString)) {
-                if (tokenString.equalsIgnoreCase("(")) {
-                    System.out.println("csdcd");
-                }
                 sb.append(tokenString.concat(Constants.WHITESPACE));
             } else {
                 // token is operator
@@ -103,6 +100,9 @@ public class CommandParser {
                             stack.pop();
                             topOperator = Operators.fromSymbol(stack.peek());
                         }
+                        continue;
+                    } else if(tokenOperator == Operators.FUNC_VARIABLE_COMMA) {
+                        //System.out.println("Comma var");
                         continue;
                     }
 
