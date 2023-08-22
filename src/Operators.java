@@ -3,8 +3,8 @@ public enum Operators {
     SUBTRACTION("-", 1),
     MULTIPLICATION("*", 2),
     DIVISION("/", 2),
-    LEFT_PARENTHESES("(", 3),
-    RIGHT_PARENTHESES(")", 3);
+    LEFT_PARENTHESES("(", -1),
+    RIGHT_PARENTHESES(")", -1);
 
     private final String symbol;
     private final int priority;
