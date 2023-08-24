@@ -8,9 +8,9 @@ public class TestCommandParser {
     }
 
     public static void test1() {
-        assert CommandParser.parse("5+6*7").equals("5 6 7 * +");
+        assert CommandParser.parse("5 + 6 * 7").equals("5 6 7 * +");
         assert CommandParser.parse("5*6+7").equals("5 6 * 7 +");
-        assert CommandParser.parse("5/4*3+2").equals("5 4 / 3 * 2 +");
+        assert CommandParser.parse("5/4 *3 +2").equals("5 4 / 3 * 2 +");
         assert CommandParser.parse("5/4-3*2").equals("5 4 / 3 2 * -");
     }
 

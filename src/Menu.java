@@ -11,7 +11,7 @@ public class Menu {
         System.out.print("İşlemi girin: ");
         Scanner scanner = new Scanner(System.in);
         String prompt = scanner.nextLine();
-        return prompt.toLowerCase();
+        return StringUtils.removeSpaces(prompt.toLowerCase());
     }
     public static void exit() {
         System.out.println("Hesap makinesi kapatılıyor. İyi günler!");

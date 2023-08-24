@@ -1,10 +1,9 @@
-import java.util.Arrays;
 import java.util.Stack;
 import java.util.StringTokenizer;
 
 public class CommandParser {
     public static String parse(String command) {
-        return convertToPostfixExpression(command);
+        return convertToPostfixExpression(StringUtils.removeSpaces(command));
     }
 
     public static double eval(String postfixExpression) {
@@ -21,14 +20,14 @@ public class CommandParser {
         StringTokenizer st = new StringTokenizer(postfixExpression, Constants.DELIMITERS, true);
         //for(char tokenChar: postfixExpression.toCharArray()) {
         while(st.hasMoreElements()) {
-            tokenString = filterToken(st.nextToken());
+            tokenString = TokenUtils.filterToken(st.nextToken());
             if (tokenString.isEmpty()) {
                 continue;
             }
-            if (isTokenMathFunction(tokenString)) {
+            if (TokenUtils.isTokenMathFunction(tokenString)) {
                 stack.push(tokenString);
-            } else if (isTokenOperand(tokenString)) {
-                if(!stack.isEmpty() && isTokenMathFunction(stack.peek())) {
+            } else if (TokenUtils.isTokenOperand(tokenString)) {
+                if(!stack.isEmpty() && TokenUtils.isTokenMathFunction(stack.peek())) {
                     //single valued variable icin
                     String funcStr = stack.peek();
                     if(getFunctionArgCount(funcStr) == 2) {
@@ -41,7 +40,7 @@ public class CommandParser {
                         stack.push(tokenString);
                     }
                     //push back val for func
-                    if (isTokenMathFunction(stack.peek())) {
+                    if (TokenUtils.isTokenMathFunction(stack.peek())) {
                         stack.push(tokenString);
                     }
                     result = doFuncOperationOnStack(stack, funcStr);
@@ -59,7 +58,7 @@ public class CommandParser {
 
                 //no func before operator!
                 //pow case
-                if (isTokenMathFunction(funcStr) && getFunctionArgCount(funcStr) == 2) {
+                if (TokenUtils.isTokenMathFunction(funcStr) && getFunctionArgCount(funcStr) == 2) {
                     //double valued func case
                     //System.err.println("NOT IMPLEMENTED");
                     //call by ref!remember! stack!
@@ -71,7 +70,7 @@ public class CommandParser {
                     topElementNext = stack.peek();
                 }
                 //may be func before before operator
-                if (isTokenMathFunction(topElementNext)) {
+                if (TokenUtils.isTokenMathFunction(topElementNext)) {
                     result = doFuncOperationOnStack(stack, topElementNext);
                     //disregard the func
                     stack.pop();
@@ -105,12 +104,12 @@ public class CommandParser {
         StringTokenizer st = new StringTokenizer(infixExpression, Constants.DELIMITERS, true);
         Stack<String> stack = new Stack<>();
         while(st.hasMoreElements()) {
-            String tokenString = filterToken(st.nextToken());
-            if (!isTokenValid(tokenString)) {
+            String tokenString = TokenUtils.filterToken(st.nextToken());
+            if (!TokenUtils.isTokenValid(tokenString)) {
                 System.err.println(tokenString + " token i beklenmedik!");
                 return null;
             }
-            if (isTokenOperand(tokenString)) {
+            if (TokenUtils.isTokenOperand(tokenString)) {
                 sb.append(tokenString.concat(Constants.WHITESPACE));
             } else {
                 // token is operator
@@ -128,7 +127,7 @@ public class CommandParser {
                     Operators tokenOperator = Operators.fromSymbol(tokenString);
 
                     if (tokenOperator == Operators.LEFT_PARENTHESES) {
-                        if (!isTokenMathFunction(opOnStack)) {
+                        if (!TokenUtils.isTokenMathFunction(opOnStack)) {
                             //LEFT PARENTHESES prior operation case
                             stack.push(tokenString);
                             continue;
@@ -248,11 +247,11 @@ public class CommandParser {
         stack.push(topElementNext);
         stack.push(topElement);
 
-        if (isTokenMathFunction(topElement)) {
+        if (TokenUtils.isTokenMathFunction(topElement)) {
             return topElement;
-        } else if (isTokenMathFunction(topElementNext)) {
+        } else if (TokenUtils.isTokenMathFunction(topElementNext)) {
             return topElementNext;
-        } else if (isTokenMathFunction(topElementNext2)) {
+        } else if (TokenUtils.isTokenMathFunction(topElementNext2)) {
             return topElementNext2;
         } else {
             //System.err.println("Stack overflow for function search!");
@@ -296,7 +295,7 @@ public class CommandParser {
         stack.push(op2);
         stack.push(op1);
 
-        return isTokenMathFunction(op1) && isTokenMathFunction(op2);
+        return TokenUtils.isTokenMathFunction(op1) && TokenUtils.isTokenMathFunction(op2);
     }
 
     private static boolean isBeforeLastOnStackIsFunction(Stack<String> stack) {
@@ -308,7 +307,7 @@ public class CommandParser {
         stack.push(op2);
         stack.push(op1);
 
-        return isTokenMathFunction(op2);
+        return TokenUtils.isTokenMathFunction(op2);
     }
     private static boolean isBeforeLastOnStackIsLeftParentheses(Stack<String> stack) {
         if (stack.size() < 2) {
@@ -322,16 +321,13 @@ public class CommandParser {
         return Operators.fromSymbol(op2) == Operators.LEFT_PARENTHESES;
     }
 
-    private static String appendWhiteSpaceToPostfixExpression(String exp) {
-        return exp.concat(Constants.WHITESPACE);
-    }
     private static boolean isOperationOnStackArithmetic(Stack<String> stack) {
         String val1 = stack.pop();
         String val2 = stack.pop();
         stack.push(val2);
         stack.push(val1);
 
-        return isTokenNumerical(val1) && isTokenNumerical(val2);
+        return TokenUtils.isTokenNumerical(val1) && TokenUtils.isTokenNumerical(val2);
     }
 
     private static boolean isOperationOnStackFunc(Stack<String> stack) {
@@ -344,52 +340,10 @@ public class CommandParser {
             return -1;
         }
         switch(funcStr) {
-            case "cos" -> result = 1;
-            case "sin" -> result = 1;
+            case "cos","sin","sqrt" -> result = 1;
             case "pow" -> result = 2;
-            case "sqrt" -> result = 1;
             default -> System.out.println("NOT IMPLEMENTED!");
         }
         return result;
-    }
-
-    private static boolean isTokenOperand(String str) {
-        return isTokenNumerical(str) || isTokenMathFunction(str);
-    }
-
-    private static boolean isTokenNumerical(String str) {
-        if (str.equals("")) {
-            return false;
-        }
-        try {
-            Double.parseDouble(str);
-        } catch (NumberFormatException nfe) {
-            return false;
-        }
-        return true;
-    }
-
-    private static boolean isTokenMathFunction(String str) {
-        if (str == null || str.length() <= 1) {
-            return false;
-        }
-        String[] funcArray = str.split("\\(");
-        return Arrays.binarySearch(Constants.ALLOWED_MATH_FUNCTIONS, funcArray[0].toLowerCase()) >= 0;
-    }
-
-    private static boolean isTokenValid(String token) {
-        return isTokenExit(token) || isTokenNumerical(token) || isTokenMathFunction(token) || isTokenDelimiter(token);
-    }
-
-    private static boolean isTokenExit(String token) {
-        return token.equalsIgnoreCase(Constants.COMMAND_EXIT);
-    }
-
-    private static String filterToken(String token) {
-        return token.trim();
-    }
-    
-    private static boolean isTokenDelimiter(String token) {
-        return Constants.DELIMITERS.contains(token);
     }
 }
