@@ -126,8 +126,22 @@ public class CommandParser {
                     String opOnStack = stack.peek();
                     Operators opOnStackOperator = Operators.fromSymbol(opOnStack);
                     Operators tokenOperator = Operators.fromSymbol(tokenString);
-                    if (tokenOperator == Operators.RIGHT_PARENTHESES) {
+
+                    if (tokenOperator == Operators.LEFT_PARENTHESES) {
+                        if (!isTokenMathFunction(opOnStack)) {
+                            //LEFT PARENTHESES prior operation case
+                            stack.push(tokenString);
+                            continue;
+                        }
+                    } else if (tokenOperator == Operators.RIGHT_PARENTHESES) {
                         Operators topOperator = Operators.fromSymbol(stack.peek());
+
+                        if (isBeforeLastOnStackIsLeftParentheses(stack) && !isBeforeLastOnStackIsFunction(stack)) {
+                            //sb.append(stack.pop().concat(Constants.WHITESPACE));
+                            doAppendOperatorToPostfixExpression(sb, stack.pop().concat(Constants.WHITESPACE));
+                            stack.pop();
+                            continue;
+                        }
                         while(topOperator == Operators.LEFT_PARENTHESES ) {
                             if (stack.isEmpty()) {
                                 System.err.println("Mismatched parentheses problem!");
@@ -142,26 +156,32 @@ public class CommandParser {
                         continue;
                     }
 
-                    if ((opOnStackOperator.isOperatorHighestPriorityFrom(tokenOperator) ||
-                        opOnStackOperator.isOperatorSamePriorityTo(tokenOperator)) && opOnStackOperator != tokenOperator) {
+                    /*if ((opOnStackOperator.isOperatorHighestPriorityFrom(tokenOperator) ||
+                        opOnStackOperator.isOperatorSamePriorityTo(tokenOperator)) &&
+                            opOnStackOperator != tokenOperator) {
+                     */
 
+                    if (opOnStackOperator.isOperatorHighestPriorityFrom(tokenOperator) ||
+                         opOnStackOperator.isOperatorSamePriorityTo(tokenOperator) ||
+                         opOnStackOperator == tokenOperator) {
                         //rule: highest priority must be on top!
                         //we have to pop from stack to postfix expression
                         //then push it
                         //since we already popped it
                         //rule: no same priority operators stay together
-
-                        sb.append(stack.pop().concat(Constants.WHITESPACE));
-                        stack.push(tokenString);
-                    } else {
-                        stack.push(tokenString);
+                        String swappedTopOperator = stack.pop();
+                        //sb.append(swappedTopOperator.concat(Constants.WHITESPACE));
+                        doAppendOperatorToPostfixExpression(sb, swappedTopOperator.concat(Constants.WHITESPACE));
+                        //stack.push(swappedTopOperator);
                     }
+                    stack.push(tokenString);
                 }
             }
         }
         // add the remaining operators to postfix expression
         while (!stack.isEmpty()) {
-            sb.append(stack.pop().concat(Constants.WHITESPACE));
+            doAppendOperatorToPostfixExpression(sb, stack.pop().concat(Constants.WHITESPACE));
+            //sb.append(stack.pop().concat(Constants.WHITESPACE));
         }
 
         return sb.toString().trim();
@@ -240,13 +260,70 @@ public class CommandParser {
         }
     }
 
+    private static void doAppendOperatorToPostfixExpression(StringBuilder sb, String element) {
+        String str = sb.toString().trim();
+        int lastIndex = str.length()-1;
+        String last = String.valueOf(str.charAt(lastIndex));
+        Operators opNew = Operators.fromSymbol(element.trim());
+        Operators opLast = Operators.fromSymbol(last);
+
+        if (opNew == Operators.LEFT_PARENTHESES || opNew == Operators.RIGHT_PARENTHESES) {
+            return;
+        }
+
+        if (opNew == null || opLast == null) {
+            sb.append(element);
+            return;
+        }
+        // dirty poor man's cozum
+        //right parentheses not expected
+        //because of poor code when input is function
+
+        if (opNew.isOperatorHighestPriorityFrom(opLast)) {
+            sb.append(element);
+        }else if (opNew.isOperatorSamePriorityTo(opLast)) {
+            System.err.println("Postfix operator eklerken operator ayni geldi!");
+        } else {
+            sb.append(element);
+        }
+    }
     private static boolean isLastTwoFuncOnStack(Stack<String> stack) {
+        if (stack.size() < 2) {
+            return false;
+        }
         String op1 = stack.pop();
         String op2 = stack.pop();
         stack.push(op2);
         stack.push(op1);
 
         return isTokenMathFunction(op1) && isTokenMathFunction(op2);
+    }
+
+    private static boolean isBeforeLastOnStackIsFunction(Stack<String> stack) {
+        if (stack.size() < 2) {
+            return false;
+        }
+        String op1 = stack.pop();
+        String op2 = stack.pop();
+        stack.push(op2);
+        stack.push(op1);
+
+        return isTokenMathFunction(op2);
+    }
+    private static boolean isBeforeLastOnStackIsLeftParentheses(Stack<String> stack) {
+        if (stack.size() < 2) {
+            return false;
+        }
+        String op1 = stack.pop();
+        String op2 = stack.pop();
+        stack.push(op2);
+        stack.push(op1);
+
+        return Operators.fromSymbol(op2) == Operators.LEFT_PARENTHESES;
+    }
+
+    private static String appendWhiteSpaceToPostfixExpression(String exp) {
+        return exp.concat(Constants.WHITESPACE);
     }
     private static boolean isOperationOnStackArithmetic(Stack<String> stack) {
         String val1 = stack.pop();
