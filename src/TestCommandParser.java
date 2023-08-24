@@ -5,6 +5,7 @@ public class TestCommandParser {
         test3();
         test4();
         test5();
+        test6();
     }
 
     public static void test1() {
@@ -41,6 +42,7 @@ public class TestCommandParser {
         String exp = CommandParser.parse("5*4+sqrt(pow(5,2))");
         System.out.println(exp);
         assert CommandParser.parse("5*4+sqrt(pow(5,2))").equals("5 4 * sqrt pow 5 2 +");
+
         Double res =  CommandParser.eval(exp);
         System.out.println(res);
         //5 4 * sqrt cos 0 25 * +
@@ -66,6 +68,40 @@ public class TestCommandParser {
 
         //assert CommandParser.eval("5 4 1 + * 5 +") == 30.0; //works
         //assert CommandParser.eval(CommandParser.parse("4+6/2*3-1")) == 12.0;
+    }
+
+    public static void test6() {
+        //assert CommandParser.parse("5*(4+sqrt(pow(5,2)))").equals("5 4 sqrt pow 5 2 + *");
+        //String expression = "5*(4+sqrt(pow(5,2)))";
+        //String expression = "5*(4+sqrt(25))";
+        //String postfixExpression = CommandParser.parse(expression);
+        //Double res1  = CommandParser.eval(postfixExpression);
+        //System.out.println(expression);
+        //System.out.println(postfixExpression);
+        //System.out.println("res1: " + res1);
+
+        //assert CommandParser.eval(CommandParser.parse("5*(4+5)")) == 45.0;
+        //assert CommandParser.eval(CommandParser.parse("5*(4+sqrt(25))")) == 45.0;
+        //assert CommandParser.eval(CommandParser.parse("5*(4+sqrt(25)*cos(0)")) == 45.0;
+        //assert CommandParser.eval(CommandParser.parse("5*(4+5")) == 45.0;
+        //assert CommandParser.eval(CommandParser.parse("5+pow(5,2)")) == 30.0;
+        //assert CommandParser.eval(CommandParser.parse("5+pow(5,2)*sqrt(4)")) == 55.0;
+        System.out.println();
+
+        //5 pow 5 2 sqrt 4 * +
+        //5 25 sqrt 4 * +
+        //5 25 2 * +
+        //5 50 +
+        //55
+        String expression = "5+pow(5,2)*sqrt(4)";
+        String postfixExpression = CommandParser.parse(expression);
+        Double res1  = CommandParser.eval(postfixExpression);
+        System.out.println(expression);
+        System.out.println(postfixExpression);
+        System.out.println("res1: " + res1);
+
+
+
     }
 
 
