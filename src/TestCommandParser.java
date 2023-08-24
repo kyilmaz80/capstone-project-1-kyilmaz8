@@ -48,8 +48,8 @@ public class TestCommandParser {
     }
 
     public static void test5() {
-        // assert CommandParser.eval(CommandParser.parse("5*4*cos(0)*5")) == 100.0;
-        //assert CommandParser.eval(CommandParser.parse("5*(4+1)+5") == 30.0;
+        assert CommandParser.eval(CommandParser.parse("5*4*cos(0)*5")) == 100.0;
+        assert CommandParser.eval(CommandParser.parse("5*(4+1)+5")) == 30.0;
 
         //String infixExpression = "5*(4+1)+5";
         //String expectedPostfixExpression = "5 4 1 + * 5 +";
