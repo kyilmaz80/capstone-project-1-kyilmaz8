@@ -4,6 +4,7 @@ public class TestCommandParser {
         test2();
         test3();
         test4();
+        test5();
     }
 
     public static void test1() {
@@ -45,4 +46,28 @@ public class TestCommandParser {
         //5 4 * sqrt cos 0 25 * +
         //5 4 * sqrt pow 5 2 +
     }
+
+    public static void test5() {
+        // assert CommandParser.eval(CommandParser.parse("5*4*cos(0)*5")) == 100.0;
+        //assert CommandParser.eval(CommandParser.parse("5*(4+1)+5") == 30.0;
+
+        //String infixExpression = "5*(4+1)+5";
+        //String expectedPostfixExpression = "5 4 1 + * 5 +";
+
+        //String infixExpression = "5+6*7";
+        //String expectedPostfixExpression = "5 6 7 * +";
+
+        String infixExpression = "5*4+sqrt(cos(0)*25)";
+        String expectedPostfixExpression = "5 4 * sqrt cos 0 25 * +";
+        String exp = CommandParser.parse(infixExpression);
+        System.out.println(exp);
+        assert CommandParser.parse(infixExpression).equals(expectedPostfixExpression);
+
+
+        //assert CommandParser.eval("5 4 1 + * 5 +") == 30.0; //works
+        //assert CommandParser.eval(CommandParser.parse("4+6/2*3-1")) == 12.0;
+    }
+
+
+
 }
