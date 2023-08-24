@@ -27,6 +27,16 @@ public class CommandParser {
             if (TokenUtils.isTokenMathFunction(tokenString)) {
                 stack.push(tokenString);
             } else if (TokenUtils.isTokenOperand(tokenString)) {
+                if(isBeforeLastOnStackIsFunction(stack)) {
+                    String funcStr = doGetBeforeLastOnStack(stack);
+                    if (getFunctionArgCount(funcStr) == 2) {
+                        stack.push(tokenString);
+                        result = doFuncOperationOnStack(stack, funcStr);
+                        stack.pop();
+                        stack.push(String.valueOf(result));
+                        continue;
+                    }
+                }
                 if(!stack.isEmpty() && TokenUtils.isTokenMathFunction(stack.peek())) {
                     //single valued variable icin
                     String funcStr = stack.peek();
@@ -308,6 +318,17 @@ public class CommandParser {
         stack.push(op1);
 
         return TokenUtils.isTokenMathFunction(op2);
+    }
+
+    private static String doGetBeforeLastOnStack(Stack<String> stack) {
+        if (stack.size() < 2) {
+            return null;
+        }
+        String op1 = stack.pop();
+        String op2 = stack.pop();
+        stack.push(op2);
+        stack.push(op1);
+        return op2;
     }
     private static boolean isBeforeLastOnStackIsLeftParentheses(Stack<String> stack) {
         if (stack.size() < 2) {
