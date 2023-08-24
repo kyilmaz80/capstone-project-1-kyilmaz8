@@ -6,6 +6,7 @@ public class TestCommandParser {
         test4();
         test5();
         test6();
+        test7();
     }
 
     public static void test1() {
@@ -71,21 +72,12 @@ public class TestCommandParser {
     }
 
     public static void test6() {
-        //assert CommandParser.parse("5*(4+sqrt(pow(5,2)))").equals("5 4 sqrt pow 5 2 + *");
-        //String expression = "5*(4+sqrt(pow(5,2)))";
-        //String expression = "5*(4+sqrt(25))";
-        //String postfixExpression = CommandParser.parse(expression);
-        //Double res1  = CommandParser.eval(postfixExpression);
-        //System.out.println(expression);
-        //System.out.println(postfixExpression);
-        //System.out.println("res1: " + res1);
-
-        //assert CommandParser.eval(CommandParser.parse("5*(4+5)")) == 45.0;
-        //assert CommandParser.eval(CommandParser.parse("5*(4+sqrt(25))")) == 45.0;
-        //assert CommandParser.eval(CommandParser.parse("5*(4+sqrt(25)*cos(0)")) == 45.0;
-        //assert CommandParser.eval(CommandParser.parse("5*(4+5")) == 45.0;
-        //assert CommandParser.eval(CommandParser.parse("5+pow(5,2)")) == 30.0;
-        //assert CommandParser.eval(CommandParser.parse("5+pow(5,2)*sqrt(4)")) == 55.0;
+        assert CommandParser.eval(CommandParser.parse("5*(4+5)")) == 45.0;
+        assert CommandParser.eval(CommandParser.parse("5*(4+sqrt(25))")) == 45.0;
+        assert CommandParser.eval(CommandParser.parse("5*(4+sqrt(25)*cos(0)")) == 45.0;
+        assert CommandParser.eval(CommandParser.parse("5*(4+5")) == 45.0;
+        assert CommandParser.eval(CommandParser.parse("5+pow(5,2)")) == 30.0;
+        assert CommandParser.eval(CommandParser.parse("5+pow(5,2)*sqrt(4)")) == 55.0;
         System.out.println();
 
         //5 pow 5 2 sqrt 4 * +
@@ -93,14 +85,25 @@ public class TestCommandParser {
         //5 25 2 * +
         //5 50 +
         //55
-        String expression = "5+pow(5,2)*sqrt(4)";
-        String postfixExpression = CommandParser.parse(expression);
-        Double res1  = CommandParser.eval(postfixExpression);
-        System.out.println(expression);
-        System.out.println(postfixExpression);
+        String expression2 = "5+pow(5,2)*sqrt(4)";
+        String postfixExpression2 = CommandParser.parse(expression2);
+        Double res2 = CommandParser.eval(postfixExpression2);
+        System.out.println(expression2);
+        System.out.println(postfixExpression2);
+        System.out.println("res1: " + res2);
+    }
+
+    public static void test7() {
+        assert CommandParser.eval(CommandParser.parse("5*(4+sqrt(pow(5,2)))")) == 45.0;
+        //5 4 sqrt pow 5 2 + *
+        String expression1 = "5*(4+sqrt(pow(5,2)))";
+        //String expression = "5*(4+sqrt(25))";
+        String postfixExpression1 = CommandParser.parse(expression1);
+        Double res1  = CommandParser.eval(postfixExpression1);
+        System.out.println(expression1);
+        System.out.println(postfixExpression1);
         System.out.println("res1: " + res1);
-
-
+        //assert CommandParser.eval(postfixExpression1) == 45.0;
 
     }
 

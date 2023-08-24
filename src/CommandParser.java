@@ -64,7 +64,8 @@ public class CommandParser {
                 // token is operator
                 // if the two elements on stack are operands
                 String funcStr = StackUtils.doGetFuncNameOnStack(stack);
-                String topElementNext = "";
+                String topElementBefore = StackUtils.doGetBeforeLastOnStack(stack);
+                String topElementNext;
 
                 //no func before operator!
                 //pow case
@@ -79,12 +80,18 @@ public class CommandParser {
                     stack.push(String.valueOf(result));
                     topElementNext = stack.peek();
                 }
+                //topElementNext = stack.peek();
                 //may be func before before operator
-                if (TokenUtils.isTokenMathFunction(topElementNext)) {
-                    result = StackUtils.doFuncOperationOnStack(stack, topElementNext);
+                else if (TokenUtils.isTokenMathFunction(topElementBefore)) {
+                    result = StackUtils.doFuncOperationOnStack(stack, topElementBefore);
                     //disregard the func
                     stack.pop();
                     stack.push(String.valueOf(result));
+                    //is remanining operator operation left?
+                    if (TokenUtils.isTokenArithmeticOperator(tokenString)) {
+                        result = StackUtils.doArithmeticOperationOnStack(stack, tokenString);
+                        stack.push(String.valueOf(result));
+                    }
                 } else {
                     if (StackUtils.isOperationOnStackFunc(stack)) {
                         funcStr = StackUtils.doGetFuncNameOnStack(stack);

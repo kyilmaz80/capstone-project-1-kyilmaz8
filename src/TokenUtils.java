@@ -41,4 +41,9 @@ public class TokenUtils {
     public static boolean isTokenDelimiter(String token) {
         return Constants.DELIMITERS.contains(token);
     }
+
+    public static boolean isTokenArithmeticOperator(String token) {
+        Operators op = Operators.fromSymbol(token);
+        return op != null;
+    }
 }
