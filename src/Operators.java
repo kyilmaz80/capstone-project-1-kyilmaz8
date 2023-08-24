@@ -1,10 +1,10 @@
 public enum Operators {
+    LEFT_PARENTHESES("(", -1),
+    RIGHT_PARENTHESES(")", -1),
     ADDITION("+",1),
     SUBTRACTION("-", 1),
     MULTIPLICATION("*", 2),
     DIVISION("/", 2),
-    LEFT_PARENTHESES("(", -1),
-    RIGHT_PARENTHESES(")", -1),
     FUNC_VARIABLE_COMMA(",", -2);
 
     private final String symbol;
