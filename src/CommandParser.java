@@ -183,7 +183,7 @@ public class CommandParser {
                             //pop the operator from the operator stack into the output queue (sb)
                             StringUtils.doAppendOperatorToPostfixExpression(sb, stack.pop().concat(Constants.WHITESPACE));
                             if (stack.isEmpty()) {
-                                System.err.println("Stack overflow! no left paranthesis left");
+                                System.err.println("No left paranthesis left");
                                 return null;
                             }
                             topOperator = Operators.fromSymbol(stack.peek());

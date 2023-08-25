@@ -4,6 +4,9 @@ public class Main {
         String command;
         do {
             command = Menu.getInput();
+            if (command.equals(Constants.COMMAND_EXIT)) {
+                break;
+            }
             String parsedCommand = CommandParser.parse(command);
             if (parsedCommand == null) {
                 System.out.println("Komut parse edilemedi!");
