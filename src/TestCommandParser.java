@@ -49,7 +49,7 @@ public class TestCommandParser {
         System.out.println(exp);
         assert CommandParser.parse("5*4+sqrt(pow(5,2))").equals("5 4 * sqrt pow 5 2 +");
 
-        Double res =  CommandParser.eval(exp);
+        Double res = CommandParser.eval(exp);
         System.out.println(res);
         //5 4 * sqrt cos 0 25 * +
         //5 4 * sqrt pow 5 2 +
@@ -104,7 +104,7 @@ public class TestCommandParser {
         String expression1 = "5*(4+sqrt(pow(5,2)))";
         //String expression = "5*(4+sqrt(25))";
         String postfixExpression1 = CommandParser.parse(expression1);
-        Double res1  = CommandParser.eval(postfixExpression1);
+        Double res1 = CommandParser.eval(postfixExpression1);
         System.out.println(expression1);
         System.out.println(postfixExpression1);
         System.out.println("res1: " + res1);
@@ -158,7 +158,6 @@ public class TestCommandParser {
         System.out.println(expression + ") eksik ) !");
         String postfixExp = CommandParser.parse(expression);
     }
-
 
 
 }

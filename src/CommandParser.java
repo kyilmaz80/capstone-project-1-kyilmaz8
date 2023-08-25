@@ -23,7 +23,7 @@ public class CommandParser {
         }
         StringTokenizer st = new StringTokenizer(postfixExpression, Constants.DELIMITERS, true);
         //for(char tokenChar: postfixExpression.toCharArray()) {
-        while(st.hasMoreElements()) {
+        while (st.hasMoreElements()) {
             tokenString = TokenUtils.filterToken(st.nextToken());
             if (tokenString.isEmpty()) {
                 continue;
@@ -31,7 +31,7 @@ public class CommandParser {
             if (TokenUtils.isTokenMathFunction(tokenString)) {
                 stack.push(tokenString);
             } else if (TokenUtils.isTokenOperand(tokenString)) {
-                if(StackUtils.isBeforeLastOnStackIsFunction(stack)) {
+                if (StackUtils.isBeforeLastOnStackIsFunction(stack)) {
                     String funcStr = StackUtils.doGetBeforeLastOnStack(stack);
                     if (StackUtils.getFunctionArgCount(funcStr) == 2) {
                         stack.push(tokenString);
@@ -41,10 +41,10 @@ public class CommandParser {
                         continue;
                     }
                 }
-                if(!stack.isEmpty() && TokenUtils.isTokenMathFunction(stack.peek())) {
+                if (!stack.isEmpty() && TokenUtils.isTokenMathFunction(stack.peek())) {
                     //single valued variable icin
                     String funcStr = stack.peek();
-                    if(StackUtils.getFunctionArgCount(funcStr) == 2) {
+                    if (StackUtils.getFunctionArgCount(funcStr) == 2) {
                         stack.push(tokenString);
                         continue;
                     }
@@ -60,7 +60,7 @@ public class CommandParser {
                     result = StackUtils.doFuncOperationOnStack(stack, funcStr);
                     stack.pop();
                     stack.push(String.valueOf(result));
-                }else {
+                } else {
                     stack.push(tokenString);
                 }
 
@@ -116,7 +116,7 @@ public class CommandParser {
                 }
             }
         }
-        while(stack.size() != 1) {
+        while (stack.size() != 1) {
             if (StackUtils.isOperationOnStackArithmetic(stack)) {
                 result = StackUtils.doArithmeticOperationOnStack(stack, tokenString);
             } else {
@@ -131,7 +131,7 @@ public class CommandParser {
         StringBuilder sb = new StringBuilder();
         StringTokenizer st = new StringTokenizer(infixExpression, Constants.DELIMITERS, true);
         Stack<String> stack = new Stack<>();
-        while(st.hasMoreElements()) {
+        while (st.hasMoreElements()) {
             String tokenString = TokenUtils.filterToken(st.nextToken());
             if (!TokenUtils.isTokenValid(tokenString)) {
                 System.err.println(tokenString + " token i beklenmedik!");
@@ -172,7 +172,7 @@ public class CommandParser {
                             continue;
                         }
                         //while the operator at the top of the operator stack is not a left parenthesis:
-                        while(topOperator != Operators.LEFT_PARENTHESES ) {
+                        while (topOperator != Operators.LEFT_PARENTHESES) {
                             if (stack.isEmpty()) {
                                 //return null;
                                 System.err.println("Stack empty @RIGHT PARENTHESIS");
@@ -193,7 +193,7 @@ public class CommandParser {
                             stack.pop();
                         }
                         continue;
-                    } else if(tokenOperator == Operators.FUNC_VARIABLE_COMMA) {
+                    } else if (tokenOperator == Operators.FUNC_VARIABLE_COMMA) {
                         //System.out.println("Comma var");
                         continue;
                     }
@@ -204,8 +204,8 @@ public class CommandParser {
                      */
 
                     if (opOnStackOperator.isOperatorHighestPriorityFrom(tokenOperator) ||
-                         opOnStackOperator.isOperatorSamePriorityTo(tokenOperator) ||
-                         opOnStackOperator == tokenOperator) {
+                            opOnStackOperator.isOperatorSamePriorityTo(tokenOperator) ||
+                            opOnStackOperator == tokenOperator) {
                         //rule: highest priority must be on top!
                         //we have to pop from stack to postfix expression
                         //then push it
@@ -234,8 +234,6 @@ public class CommandParser {
 
         return sb.toString().trim();
     }
-
-
 
 
 }

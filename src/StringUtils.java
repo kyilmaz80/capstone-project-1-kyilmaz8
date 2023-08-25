@@ -13,7 +13,7 @@ public class StringUtils {
 
     public static void doAppendOperatorToPostfixExpression(StringBuilder sb, String element) {
         String str = sb.toString().trim();
-        int lastIndex = str.length()-1;
+        int lastIndex = str.length() - 1;
         String last = String.valueOf(str.charAt(lastIndex));
         Operators opNew = Operators.fromSymbol(element.trim());
         Operators opLast = Operators.fromSymbol(last);
