@@ -8,7 +8,7 @@ public class StackUtils {
             case DIVISION -> result = val2 / val1;
             case ADDITION -> result = val2 + val1;
             case SUBTRACTION -> result = val2 - val1;
-            default -> System.out.println("ARITHMETIC OP NOT IMPLEMENTED!");
+            default -> System.out.println(op + " OP NOT IMPLEMENTED doOperation!");
         }
         return result;
     }
@@ -98,6 +98,9 @@ public class StackUtils {
     }
 
     public static boolean isOperationOnStackArithmetic(Stack<String> stack) {
+        if (stack.size() < 2) {
+            return false;
+        }
         String val1 = stack.pop();
         String val2 = stack.pop();
         stack.push(val2);
@@ -112,7 +115,7 @@ public class StackUtils {
 
     public static int getFunctionArgCount(String funcStr) {
         int result = 0;
-        if (funcStr.equalsIgnoreCase("") || funcStr == null) {
+        if (funcStr == null || funcStr.equalsIgnoreCase("")) {
             return -1;
         }
         switch(funcStr) {

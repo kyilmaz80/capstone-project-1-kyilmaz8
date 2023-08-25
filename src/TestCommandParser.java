@@ -1,15 +1,16 @@
 public class TestCommandParser {
     public static void main(String[] args) {
-        test1();
-        test2();
-        test3();
-        test4();
-        test5();
-        test6();
-        test7();
-        test8();
-        test9();
-        test10();
+//        test1();
+//        test2();
+//        test3();
+//        test4();
+//        test5();
+//        test6();
+//        test7();
+//        test8();
+//        test9();
+//        test10();
+        test11();
     }
 
     public static void test1() {
@@ -148,6 +149,11 @@ public class TestCommandParser {
 
         //Double res = CommandParser.eval(CommandParser.parse("5*(4+sqrt(25)*cos(0))"));
         //System.out.println(res);
+    }
+
+    public static void test11() {
+        String expression = "5*cos(0";
+        String postfixExp = CommandParser.parse(expression);
     }
 
 

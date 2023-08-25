@@ -3,8 +3,7 @@ import java.util.StringTokenizer;
 
 public class CommandParser {
     public static String parse(String command) {
-        String postfixExpression = convertToPostfixExpression(StringUtils.removeSpaces(command));
-        return postfixExpression;
+        return convertToPostfixExpression(StringUtils.removeSpaces(command));
     }
 
     public static double eval(String postfixExpression) {
@@ -106,6 +105,12 @@ public class CommandParser {
                         stack.pop();
                     } else {
                         result = StackUtils.doArithmeticOperationOnStack(stack, tokenString);
+                        if (result == -1) {
+                            //error condition unexpected operator
+                            //not a +-/* operator
+                            //System.exit(1);
+                            return -1;
+                        }
                     }
                     stack.push(String.valueOf(result));
                 }
@@ -177,6 +182,10 @@ public class CommandParser {
                             }
                             //pop the operator from the operator stack into the output queue (sb)
                             StringUtils.doAppendOperatorToPostfixExpression(sb, stack.pop().concat(Constants.WHITESPACE));
+                            if (stack.isEmpty()) {
+                                System.err.println("Stack overflow! no left paranthesis left");
+                                return null;
+                            }
                             topOperator = Operators.fromSymbol(stack.peek());
                         }
                         //pop the left parenthesis from the operator stack and discard it
