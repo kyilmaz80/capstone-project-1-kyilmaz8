@@ -3,7 +3,8 @@ import java.util.StringTokenizer;
 
 public class CommandParser {
     public static String parse(String command) {
-        return convertToPostfixExpression(StringUtils.removeSpaces(command));
+        String postfixExpression = convertToPostfixExpression(StringUtils.removeSpaces(command));
+        return postfixExpression;
     }
 
     public static double eval(String postfixExpression) {
