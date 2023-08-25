@@ -18,6 +18,10 @@ public class CommandParser {
         // repeat until the end of the expression
         Stack<String> stack = new Stack<>();
         String tokenString = null;
+        if (postfixExpression == null) {
+            System.err.println("Beklenmeyen postfix ifadesi null!");
+            System.exit(1);
+        }
         StringTokenizer st = new StringTokenizer(postfixExpression, Constants.DELIMITERS, true);
         //for(char tokenChar: postfixExpression.toCharArray()) {
         while(st.hasMoreElements()) {
@@ -156,17 +160,28 @@ public class CommandParser {
 
                         if (StackUtils.isBeforeLastOnStackIsLeftParentheses(stack) && !StackUtils.isBeforeLastOnStackIsFunction(stack)) {
                             //sb.append(stack.pop().concat(Constants.WHITESPACE));
-                            StackUtils.doAppendOperatorToPostfixExpression(sb, stack.pop().concat(Constants.WHITESPACE));
+                            if (topOperator != Operators.LEFT_PARENTHESES) {
+                                StringUtils.doAppendOperatorToPostfixExpression(sb, stack.pop().concat(Constants.WHITESPACE));
+                            }
                             stack.pop();
                             continue;
                         }
-                        while(topOperator == Operators.LEFT_PARENTHESES ) {
+                        //while the operator at the top of the operator stack is not a left parenthesis:
+                        while(topOperator != Operators.LEFT_PARENTHESES ) {
                             if (stack.isEmpty()) {
-                                System.err.println("Mismatched parentheses problem!");
-                                return null;
+                                //return null;
+                                System.err.println("Stack empty @RIGHT PARENTHESIS");
+                                break;
+                                //topOperator = Operators.fromSymbol(stack.peek());
+
                             }
-                            stack.pop();
+                            //pop the operator from the operator stack into the output queue (sb)
+                            StringUtils.doAppendOperatorToPostfixExpression(sb, stack.pop().concat(Constants.WHITESPACE));
                             topOperator = Operators.fromSymbol(stack.peek());
+                        }
+                        //pop the left parenthesis from the operator stack and discard it
+                        if (topOperator == Operators.LEFT_PARENTHESES) {
+                            stack.pop();
                         }
                         continue;
                     } else if(tokenOperator == Operators.FUNC_VARIABLE_COMMA) {
@@ -189,7 +204,7 @@ public class CommandParser {
                         //rule: no same priority operators stay together
                         String swappedTopOperator = stack.pop();
                         //sb.append(swappedTopOperator.concat(Constants.WHITESPACE));
-                        StackUtils.doAppendOperatorToPostfixExpression(sb, swappedTopOperator.concat(Constants.WHITESPACE));
+                        StringUtils.doAppendOperatorToPostfixExpression(sb, swappedTopOperator.concat(Constants.WHITESPACE));
                         //stack.push(swappedTopOperator);
                     }
                     stack.push(tokenString);
@@ -197,9 +212,15 @@ public class CommandParser {
             }
         }
         // add the remaining operators to postfix expression
+        // while there are tokens on the operator stack:
         while (!stack.isEmpty()) {
-            StackUtils.doAppendOperatorToPostfixExpression(sb, stack.pop().concat(Constants.WHITESPACE));
+            StringUtils.doAppendOperatorToPostfixExpression(sb, stack.pop().concat(Constants.WHITESPACE));
             //sb.append(stack.pop().concat(Constants.WHITESPACE));
+        }
+
+        if (StringUtils.isStringContainsParentheses(sb.toString())) {
+            System.err.println("Mismatched parentheses problem!");
+            //return null;
         }
 
         return sb.toString().trim();

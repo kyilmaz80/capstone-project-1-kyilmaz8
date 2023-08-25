@@ -51,24 +51,6 @@ public class StackUtils {
         return doCalculateFunction(funcStr, vals);
     }
 
-    public static void doAppendOperatorToPostfixExpression(StringBuilder sb, String element) {
-        String str = sb.toString().trim();
-        int lastIndex = str.length()-1;
-        String last = String.valueOf(str.charAt(lastIndex));
-        Operators opNew = Operators.fromSymbol(element.trim());
-        Operators opLast = Operators.fromSymbol(last);
-
-        if (opNew == Operators.LEFT_PARENTHESES || opNew == Operators.RIGHT_PARENTHESES) {
-            return;
-        }
-
-        if (opNew == null || opLast == null) {
-            sb.append(element);
-            return;
-        }
-
-        sb.append(element);
-    }
     public static boolean isLastTwoFuncOnStack(Stack<String> stack) {
         if (stack.size() < 2) {
             return false;

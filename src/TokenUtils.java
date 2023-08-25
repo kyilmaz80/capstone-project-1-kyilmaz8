@@ -46,4 +46,9 @@ public class TokenUtils {
         Operators op = Operators.fromSymbol(token);
         return op != null;
     }
+
+    public static boolean isTokenParentheses(String token) {
+        Operators op = Operators.fromSymbol(token);
+        return op == Operators.LEFT_PARENTHESES || op == Operators.RIGHT_PARENTHESES;
+    }
 }
