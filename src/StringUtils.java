@@ -17,13 +17,7 @@ public class StringUtils {
         String last = String.valueOf(str.charAt(lastIndex));
         Operators opNew = Operators.fromSymbol(element.trim());
         Operators opLast = Operators.fromSymbol(last);
-
-        /*if (opNew == null || opLast == null) {
-            sb.append(element);
-            return;
-        }
-
-         */
+        //TODO: other cases
         sb.append(element);
     }
 }

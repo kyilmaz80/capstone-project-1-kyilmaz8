@@ -118,6 +118,7 @@ public class StackUtils {
         if (funcStr == null || funcStr.equalsIgnoreCase("")) {
             return -1;
         }
+        //TODO: Functions class i ekleyip Constants'dan otomatik almak gerekebilir.
         switch(funcStr) {
             case "cos","sin","sqrt" -> result = 1;
             case "pow" -> result = 2;

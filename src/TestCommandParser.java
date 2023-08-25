@@ -1,5 +1,6 @@
 public class TestCommandParser {
     public static void main(String[] args) {
+        //-enableassertions ile derlenmeli.
         test1();
         test2();
         test3();
