@@ -6,8 +6,8 @@ public class CommandParser {
         return convertToPostfixExpression(StringUtils.removeSpaces(command));
     }
 
-    public static double eval(String postfixExpression) {
-        double result;
+    public static Double eval(String postfixExpression) {
+        Double result;
         // read the expression from left to right
         // push the element in to a stack if it is operand
         // if the current character is an operator,
@@ -109,7 +109,7 @@ public class CommandParser {
                             //error condition unexpected operator
                             //not a +-/* operator
                             //System.exit(1);
-                            return -1;
+                            return null;
                         }
                     }
                     stack.push(String.valueOf(result));
@@ -229,7 +229,7 @@ public class CommandParser {
 
         if (StringUtils.isStringContainsParentheses(sb.toString())) {
             System.err.println("Mismatched parentheses problem!");
-            //return null;
+            return null;
         }
 
         return sb.toString().trim();
