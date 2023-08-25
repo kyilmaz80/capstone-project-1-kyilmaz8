@@ -7,6 +7,7 @@ public class TestCommandParser {
         test5();
         test6();
         test7();
+        test8();
     }
 
     public static void test1() {
@@ -67,7 +68,7 @@ public class TestCommandParser {
         assert CommandParser.parse(infixExpression).equals(expectedPostfixExpression);
 
 
-        //assert CommandParser.eval("5 4 1 + * 5 +") == 30.0; //works
+        assert CommandParser.eval("5 4 1 + * 5 +") == 30.0; //works
         //assert CommandParser.eval(CommandParser.parse("4+6/2*3-1")) == 12.0;
     }
 
@@ -105,6 +106,11 @@ public class TestCommandParser {
         System.out.println("res1: " + res1);
         //assert CommandParser.eval(postfixExpression1) == 45.0;
 
+    }
+
+    public static void test8() {
+        //Postfix operator eklerken operator ayni geldi case
+        assert CommandParser.eval(CommandParser.parse("4+6/2*3-1")) == 12.0;
     }
 
 

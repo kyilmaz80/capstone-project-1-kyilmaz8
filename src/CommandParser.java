@@ -63,8 +63,9 @@ public class CommandParser {
             } else {
                 // token is operator
                 // if the two elements on stack are operands
-                String funcStr = StackUtils.doGetFuncNameOnStack(stack);
-                String topElementBefore = StackUtils.doGetBeforeLastOnStack(stack);
+                //String funcStr = StackUtils.doGetFuncNameOnStack(stack);
+                //String topElementBefore = StackUtils.doGetBeforeLastOnStack(stack);
+                String funcStr = StackUtils.doGetBeforeLastOnStack(stack);
                 String topElementNext;
 
                 //no func before operator!
@@ -82,8 +83,8 @@ public class CommandParser {
                 }
                 //topElementNext = stack.peek();
                 //may be func before before operator
-                else if (TokenUtils.isTokenMathFunction(topElementBefore)) {
-                    result = StackUtils.doFuncOperationOnStack(stack, topElementBefore);
+                else if (TokenUtils.isTokenMathFunction(funcStr)) {
+                    result = StackUtils.doFuncOperationOnStack(stack, funcStr);
                     //disregard the func
                     stack.pop();
                     stack.push(String.valueOf(result));
@@ -94,7 +95,7 @@ public class CommandParser {
                     }
                 } else {
                     if (StackUtils.isOperationOnStackFunc(stack)) {
-                        funcStr = StackUtils.doGetFuncNameOnStack(stack);
+                        funcStr = StackUtils.doGetBeforeLastOnStack(stack);
                         result = StackUtils.doFuncOperationOnStack(stack, funcStr);
                         //pop the func
                         stack.pop();

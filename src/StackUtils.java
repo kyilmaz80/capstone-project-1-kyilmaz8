@@ -51,29 +51,6 @@ public class StackUtils {
         return doCalculateFunction(funcStr, vals);
     }
 
-    public static String doGetFuncNameOnStack(Stack<String> stack) {
-        String topElement = stack.pop();
-        String topElementNext = stack.pop();
-        String topElementNext2 = "";
-        if (!stack.isEmpty() || stack.size() > 2) {
-            topElementNext2 = stack.pop();
-            stack.push(topElementNext2);
-        }
-        stack.push(topElementNext);
-        stack.push(topElement);
-
-        if (TokenUtils.isTokenMathFunction(topElement)) {
-            return topElement;
-        } else if (TokenUtils.isTokenMathFunction(topElementNext)) {
-            return topElementNext;
-        } else if (TokenUtils.isTokenMathFunction(topElementNext2)) {
-            return topElementNext2;
-        } else {
-            //System.err.println("Stack overflow for function search!");
-            return null;
-        }
-    }
-
     public static void doAppendOperatorToPostfixExpression(StringBuilder sb, String element) {
         String str = sb.toString().trim();
         int lastIndex = str.length()-1;
@@ -89,17 +66,8 @@ public class StackUtils {
             sb.append(element);
             return;
         }
-        // dirty poor man's cozum
-        //right parentheses not expected
-        //because of poor code when input is function
 
-        if (opNew.isOperatorHighestPriorityFrom(opLast)) {
-            sb.append(element);
-        }else if (opNew.isOperatorSamePriorityTo(opLast)) {
-            System.err.println("Postfix operator eklerken operator ayni geldi!");
-        } else {
-            sb.append(element);
-        }
+        sb.append(element);
     }
     public static boolean isLastTwoFuncOnStack(Stack<String> stack) {
         if (stack.size() < 2) {
