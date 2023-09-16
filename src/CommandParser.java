@@ -1,3 +1,6 @@
+import func.FlexCalculator;
+import func.MathFunction;
+
 import java.util.Stack;
 import java.util.StringTokenizer;
 
@@ -15,6 +18,7 @@ public class CommandParser {
         //   evaluate it
         //   push back the result of the evaluation
         // repeat until the end of the expression
+        FlexCalculator fc = FunctionsFactory.getInstance();
         Stack<String> stack = new Stack<>();
         String tokenString = null;
         if (postfixExpression == null) {
@@ -33,9 +37,18 @@ public class CommandParser {
             } else if (TokenUtils.isTokenOperand(tokenString)) {
                 if (StackUtils.isBeforeLastOnStackIsFunction(stack)) {
                     String funcStr = StackUtils.doGetBeforeLastOnStack(stack);
-                    if (StackUtils.getFunctionArgCount(funcStr) == 2) {
+                    //if (StackUtils.getFunctionArgCount(funcStr) == 2) {
+                    MathFunction function = fc.getFunction(funcStr);
+                    if (function == null) {
+                        throw new RuntimeException(funcStr + " not found!");
+                    }
+
+                    int argCount = function.getArgCount();
+                    if (argCount == 2) {
                         stack.push(tokenString);
-                        result = StackUtils.doFuncOperationOnStack(stack, funcStr);
+                        double[] vals = StackUtils.getFuncArgsOnStack(stack, argCount);
+                        //result = StackUtils.doFuncOperationOnStack(stack, funcStr);
+                        result = fc.doCalculation(funcStr, vals[0], vals[1]);
                         stack.pop();
                         stack.push(String.valueOf(result));
                         continue;
@@ -44,7 +57,12 @@ public class CommandParser {
                 if (!stack.isEmpty() && TokenUtils.isTokenMathFunction(stack.peek())) {
                     //single valued variable icin
                     String funcStr = stack.peek();
-                    if (StackUtils.getFunctionArgCount(funcStr) == 2) {
+                    MathFunction function = fc.getFunction(funcStr);
+
+                    int argCount = function.getArgCount();
+
+                    //if (StackUtils.getFunctionArgCount(funcStr) == 2) {
+                    if (argCount == 2) {
                         stack.push(tokenString);
                         continue;
                     }
@@ -57,7 +75,10 @@ public class CommandParser {
                     if (TokenUtils.isTokenMathFunction(stack.peek())) {
                         stack.push(tokenString);
                     }
-                    result = StackUtils.doFuncOperationOnStack(stack, funcStr);
+                    //result = StackUtils.doFuncOperationOnStack(stack, funcStr);
+                    double[] vals = StackUtils.getFuncArgsOnStack(stack, argCount);
+                    //TODO: arg may be 1 or >2 assume 1 for now since multifuncarg not implemented yet
+                    result = fc.doCalculation(funcStr, vals[0]);
                     stack.pop();
                     stack.push(String.valueOf(result));
                 } else {
@@ -74,11 +95,23 @@ public class CommandParser {
 
                 //no func before operator!
                 //pow case
-                if (TokenUtils.isTokenMathFunction(funcStr) && StackUtils.getFunctionArgCount(funcStr) == 2) {
+
+                MathFunction function = fc.getFunction(funcStr);
+                //if (function == null) {
+                //    throw new RuntimeException(funcStr + " not found!");
+                //}
+                int argCount = -1;
+                if (function != null) {
+                    argCount = function.getArgCount();
+                }
+
+                if (TokenUtils.isTokenMathFunction(funcStr) && argCount == 2) {
                     //double valued func case
                     //System.err.println("NOT IMPLEMENTED");
                     //call by ref!remember! stack!
-                    result = StackUtils.doFuncOperationOnStack(stack, funcStr);
+                    double[] vals = StackUtils.getFuncArgsOnStack(stack, argCount);
+                    result = fc.doCalculation(funcStr, vals[0], vals[1]);
+                    //result = StackUtils.doFuncOperationOnStack(stack, funcStr);
                     //pop the func
                     stack.pop();
                     //push result
@@ -88,7 +121,11 @@ public class CommandParser {
                 //topElementNext = stack.peek();
                 //may be func before before operator
                 else if (TokenUtils.isTokenMathFunction(funcStr)) {
-                    result = StackUtils.doFuncOperationOnStack(stack, funcStr);
+
+                    //result = StackUtils.doFuncOperationOnStack(stack, funcStr);
+                    double[] vals = StackUtils.getFuncArgsOnStack(stack, argCount);
+                    //TODO: arg may be 1 or >2 assume 1 for now since multifuncarg not implemented yet
+                    result = fc.doCalculation(funcStr, vals[0]);
                     //disregard the func
                     stack.pop();
                     stack.push(String.valueOf(result));
@@ -100,7 +137,9 @@ public class CommandParser {
                 } else {
                     if (StackUtils.isOperationOnStackFunc(stack)) {
                         funcStr = StackUtils.doGetBeforeLastOnStack(stack);
-                        result = StackUtils.doFuncOperationOnStack(stack, funcStr);
+                        double[] vals = StackUtils.getFuncArgsOnStack(stack, argCount);
+                        result = fc.doCalculation(funcStr, vals);
+                        //result = StackUtils.doFuncOperationOnStack(stack, funcStr);
                         //pop the func
                         stack.pop();
                     } else {
@@ -120,7 +159,15 @@ public class CommandParser {
             if (StackUtils.isOperationOnStackArithmetic(stack)) {
                 result = StackUtils.doArithmeticOperationOnStack(stack, tokenString);
             } else {
-                result = StackUtils.doFuncOperationOnStack(stack, tokenString);
+                MathFunction function = fc.getFunction(tokenString);
+                if (function == null) {
+                    throw new RuntimeException(tokenString + " not found!");
+                }
+                int argCount = function.getArgCount();
+                double[] vals = StackUtils.getFuncArgsOnStack(stack, argCount);
+                //TODO: arg may be 1 or >2 assume 1 for now since multifuncarg not implemented yet
+                result = fc.doCalculation(tokenString, vals[0]);
+                //result = StackUtils.doFuncOperationOnStack(stack, tokenString);
             }
             stack.push(String.valueOf(result));
         }

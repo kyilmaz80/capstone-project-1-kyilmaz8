@@ -13,6 +13,8 @@ public class StackUtils {
         return result;
     }
 
+    //implementation migrated to new FunctionsFactory
+    @Deprecated
     public static double doCalculateFunction(String funcStr, double[] args) {
         double result = -1;
         //String[] funcArray = funcStr.split("\\(");
@@ -29,6 +31,7 @@ public class StackUtils {
         //return Arrays.binarySearch(Constants.ALLOWED_MATH_FUNCTIONS, funcArray[0].toLowerCase()) >= 0;
     }
 
+
     public static double doArithmeticOperationOnStack(Stack<String> stack, String tokenString) {
         double val1 = Double.parseDouble(stack.pop());
         //can be operand or func
@@ -39,6 +42,17 @@ public class StackUtils {
         //stack.push(String.valueOf(result));
     }
 
+    public static double[] getFuncArgsOnStack(Stack<String> stack, int varCount) {
+        double[] vals = new double[varCount];
+        for (int i = 0; i < varCount; i++) {
+            vals[i] = Double.parseDouble(stack.pop());
+        }
+        return vals;
+    }
+
+
+    //implementation migrated to new FunctionsFactory
+    @Deprecated
     public static double doFuncOperationOnStack(Stack<String> stack, String funcStr) {
 
         int varCount = getFunctionArgCount(funcStr);
@@ -51,6 +65,7 @@ public class StackUtils {
         //stack.push(String.valueOf(result));
         return doCalculateFunction(funcStr, vals);
     }
+
 
     public static boolean isLastTwoFuncOnStack(Stack<String> stack) {
         if (stack.size() < 2) {
