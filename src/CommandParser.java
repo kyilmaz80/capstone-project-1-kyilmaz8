@@ -78,6 +78,9 @@ public class CommandParser {
                     //result = StackUtils.doFuncOperationOnStack(stack, funcStr);
                     double[] vals = StackUtils.getFuncArgsOnStack(stack, argCount);
                     //TODO: arg may be 1 or >2 assume 1 for now since multifuncarg not implemented yet
+                    if (vals.length > 1) {
+                        throw new RuntimeException("vals length > 1");
+                    }
                     result = fc.doCalculation(funcStr, vals[0]);
                     stack.pop();
                     stack.push(String.valueOf(result));
@@ -125,6 +128,9 @@ public class CommandParser {
                     //result = StackUtils.doFuncOperationOnStack(stack, funcStr);
                     double[] vals = StackUtils.getFuncArgsOnStack(stack, argCount);
                     //TODO: arg may be 1 or >2 assume 1 for now since multifuncarg not implemented yet
+                    if (vals.length > 1) {
+                        throw new RuntimeException("vals length > 1");
+                    }
                     result = fc.doCalculation(funcStr, vals[0]);
                     //disregard the func
                     stack.pop();
@@ -166,6 +172,9 @@ public class CommandParser {
                 int argCount = function.getArgCount();
                 double[] vals = StackUtils.getFuncArgsOnStack(stack, argCount);
                 //TODO: arg may be 1 or >2 assume 1 for now since multifuncarg not implemented yet
+                if (vals.length > 1) {
+                    throw new RuntimeException("vals length > 1");
+                }
                 result = fc.doCalculation(tokenString, vals[0]);
                 //result = StackUtils.doFuncOperationOnStack(stack, tokenString);
             }
