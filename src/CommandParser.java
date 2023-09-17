@@ -1,4 +1,4 @@
-import func.FlexCalculator;
+import func.FunctionCalculator;
 import func.MathFunction;
 
 import java.util.Stack;
@@ -18,7 +18,7 @@ public class CommandParser {
         //   evaluate it
         //   push back the result of the evaluation
         // repeat until the end of the expression
-        FlexCalculator fc = FunctionsFactory.getInstance();
+        FunctionCalculator fc = FunctionCalculatorFactory.getInstance();
         Stack<String> stack = new Stack<>();
         String tokenString = null;
         if (postfixExpression == null) {

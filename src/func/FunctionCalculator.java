@@ -2,13 +2,13 @@ package func;
 
 import java.lang.reflect.InvocationTargetException;
 
-public class FlexCalculator implements Calculator{
+public class FunctionCalculator implements Calculator{
     private int functionCount;
     private int currentCount = 0;
     private MathFunction[] functions;
     private double argument;
 
-    public FlexCalculator(int functionCount) {
+    public FunctionCalculator(int functionCount) {
         this.functionCount = functionCount;
         functions = new MathFunction[functionCount];
         initMathFunctions();
