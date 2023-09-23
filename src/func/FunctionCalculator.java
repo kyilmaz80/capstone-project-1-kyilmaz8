@@ -49,8 +49,20 @@ public class FunctionCalculator implements Calculator{
     }
 
     @Override
-    public double doCalculation(String functionName, double[] args) {
-        throw new RuntimeException("Multi args not implemented yet!");
+    public Double doCalculation(String functionName, Double[] args) {
+        double result = 0.0;
+        boolean isFunctionFound = false;
+
+        MathFunction function = findFunction(functionName);
+        if (function != null ) {
+            result = ((MultiArgMathFunction)function).calculate(args);
+            isFunctionFound = true;
+        }
+
+        if(!isFunctionFound)
+            System.out.println("No such function found!");
+
+        return result;
     }
 
     public MathFunction findFunction(String functionName) {
