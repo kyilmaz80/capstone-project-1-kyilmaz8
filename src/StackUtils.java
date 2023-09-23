@@ -94,6 +94,7 @@ public class StackUtils {
         return TokenUtils.isTokenMathFunction(op1) && TokenUtils.isTokenMathFunction(op2);
     }
 
+    @Deprecated
     public static boolean isBeforeLastOnStackIsFunction(Stack<String> stack) {
         if (stack.size() < 2) {
             return false;
@@ -106,6 +107,47 @@ public class StackUtils {
         return TokenUtils.isTokenMathFunction(op2);
     }
 
+    static class FuncHelper {
+        public boolean isFunction;
+        public int funcArgCount;
+        public String name;
+        FuncHelper(boolean isFunction, int funcArgCount, String name) {
+            this.isFunction = isFunction;
+            this.funcArgCount = funcArgCount;
+            this.name = name;
+        }
+    }
+    public static FuncHelper getRecursiveBeforeOnStackIsFunction(Stack<String> stack) {
+        String op;
+        List<String> arrayList = new ArrayList();
+        if (stack.isEmpty()) {
+            return new FuncHelper(false, 0, null);
+        }
+        op = stack.pop();
+        if (stack.size() < 2) {
+            return new FuncHelper(false, 0, null);
+        }
+        while(TokenUtils.isTokenNumerical(op)) {
+            if (stack.isEmpty()) {
+                //throw new RuntimeException("Stack empty in isRecursiveBeforeOnStackIsFunction");
+                break;
+            }
+            arrayList.add(op);
+            op = stack.pop();
+        }
+        String name = op;
+        boolean isFunc = TokenUtils.isTokenMathFunction(name);
+
+        stack.push(op);
+        for(int i = arrayList.size()-1; i >= 0; i--) {
+            stack.push(arrayList.get(i));
+        }
+
+
+        return new FuncHelper(isFunc, arrayList.size(), name);
+    }
+
+    @Deprecated
     public static String doGetBeforeLastOnStack(Stack<String> stack) {
         if (stack.size() < 2) {
             return null;

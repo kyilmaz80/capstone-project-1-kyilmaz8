@@ -1,17 +1,17 @@
 public class TestCommandParser {
     public static void main(String[] args) {
         //-enableassertions ile derlenmeli.
-//        test1();
-//        test2();
-//        test3();
-//        test4();
-//        test5();
-//        test6();
-//        test7();
-//        test8();
-//        test9();
-//        test10();
-//        test11();
+        test1();
+        test2();
+        test3();
+        test4();
+        test5();
+        test6();
+        test7();
+        test8();
+        test9();
+        test10();
+        test11();
         test12();
     }
 
@@ -172,13 +172,13 @@ public class TestCommandParser {
     }
 
     public static void test12() {
-        String expression = "max(4,6,5)";
-        String postfixExpected = "max 4 6 5";
+        String expression = "1+max(4,5,6)";
+        String postfixExpected = "1 max 4 5 6 +";
         String postfixResult = CommandParser.parse(expression);
         assert postfixResult.equals(postfixExpected);
         System.out.println(postfixResult);
         Double res = CommandParser.eval(postfixResult);
-        assert res == 6;
+        assert res == 7.0;
         System.out.println(res);
     }
 
