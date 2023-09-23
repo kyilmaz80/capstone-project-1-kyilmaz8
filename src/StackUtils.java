@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Stack;
 
 public class StackUtils {
@@ -42,11 +44,24 @@ public class StackUtils {
         //stack.push(String.valueOf(result));
     }
 
-    public static double[] getFuncArgsOnStack(Stack<String> stack, int varCount) {
-        double[] vals = new double[varCount];
+    public static Double[] getFuncArgsOnStack(Stack<String> stack, int varCount) {
+        Double[] vals = new Double[varCount];
         for (int i = 0; i < varCount; i++) {
             vals[i] = Double.parseDouble(stack.pop());
         }
+        return vals;
+    }
+
+    public static Double[] getFuncArgsOnStack(Stack<String> stack) {
+        //double[] vals = new double[varCount];
+        List<Double> arrayList = new ArrayList();
+        while(TokenUtils.isTokenNumerical(stack.peek())) {
+            //TODO: stack empty case?
+            Double v = Double.parseDouble(stack.pop());
+            arrayList.add(v);
+        }
+        Double[] vals = new Double[arrayList.size()];
+        vals = arrayList.toArray(vals);
         return vals;
     }
 

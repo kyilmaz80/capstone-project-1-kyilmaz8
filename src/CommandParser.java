@@ -11,6 +11,7 @@ public class CommandParser {
 
     public static Double eval(String postfixExpression) {
         Double result;
+        boolean varAgs = false;
         // read the expression from left to right
         // push the element in to a stack if it is operand
         // if the current character is an operator,
@@ -46,9 +47,16 @@ public class CommandParser {
                     int argCount = function.getArgCount();
                     if (argCount == 2) {
                         stack.push(tokenString);
-                        double[] vals = StackUtils.getFuncArgsOnStack(stack, argCount);
+                        Double[] vals = StackUtils.getFuncArgsOnStack(stack, argCount);
                         //result = StackUtils.doFuncOperationOnStack(stack, funcStr);
                         result = fc.doCalculation(funcStr, vals[0], vals[1]);
+                        stack.pop();
+                        stack.push(String.valueOf(result));
+                        continue;
+                    } else if (argCount == -1) {
+                        stack.push(tokenString);
+                        Double[] vals = StackUtils.getFuncArgsOnStack(stack);
+                        result = fc.doCalculation(funcStr, vals);
                         stack.pop();
                         stack.push(String.valueOf(result));
                         continue;
@@ -62,7 +70,8 @@ public class CommandParser {
                     int argCount = function.getArgCount();
 
                     //if (StackUtils.getFunctionArgCount(funcStr) == 2) {
-                    if (argCount == 2) {
+                    if (argCount == 2 || argCount == -1) {
+                        varAgs = argCount == -1 ? true : false;
                         stack.push(tokenString);
                         continue;
                     }
@@ -76,7 +85,7 @@ public class CommandParser {
                         stack.push(tokenString);
                     }
                     //result = StackUtils.doFuncOperationOnStack(stack, funcStr);
-                    double[] vals = StackUtils.getFuncArgsOnStack(stack, argCount);
+                    Double[] vals = StackUtils.getFuncArgsOnStack(stack, argCount);
                     //TODO: arg may be 1 or >2 assume 1 for now since multifuncarg not implemented yet
                     if (vals.length > 1) {
                         throw new RuntimeException("vals length > 1");
@@ -112,7 +121,7 @@ public class CommandParser {
                     //double valued func case
                     //System.err.println("NOT IMPLEMENTED");
                     //call by ref!remember! stack!
-                    double[] vals = StackUtils.getFuncArgsOnStack(stack, argCount);
+                    Double[] vals = StackUtils.getFuncArgsOnStack(stack, argCount);
                     result = fc.doCalculation(funcStr, vals[0], vals[1]);
                     //result = StackUtils.doFuncOperationOnStack(stack, funcStr);
                     //pop the func
@@ -126,7 +135,7 @@ public class CommandParser {
                 else if (TokenUtils.isTokenMathFunction(funcStr)) {
 
                     //result = StackUtils.doFuncOperationOnStack(stack, funcStr);
-                    double[] vals = StackUtils.getFuncArgsOnStack(stack, argCount);
+                    Double[] vals = StackUtils.getFuncArgsOnStack(stack, argCount);
                     //TODO: arg may be 1 or >2 assume 1 for now since multifuncarg not implemented yet
                     if (vals.length > 1) {
                         throw new RuntimeException("vals length > 1");
@@ -143,7 +152,7 @@ public class CommandParser {
                 } else {
                     if (StackUtils.isOperationOnStackFunc(stack)) {
                         funcStr = StackUtils.doGetBeforeLastOnStack(stack);
-                        double[] vals = StackUtils.getFuncArgsOnStack(stack, argCount);
+                        Double[] vals = StackUtils.getFuncArgsOnStack(stack, argCount);
                         result = fc.doCalculation(funcStr, vals);
                         //result = StackUtils.doFuncOperationOnStack(stack, funcStr);
                         //pop the func
@@ -170,7 +179,7 @@ public class CommandParser {
                     throw new RuntimeException(tokenString + " not found!");
                 }
                 int argCount = function.getArgCount();
-                double[] vals = StackUtils.getFuncArgsOnStack(stack, argCount);
+                Double[] vals = StackUtils.getFuncArgsOnStack(stack, argCount);
                 //TODO: arg may be 1 or >2 assume 1 for now since multifuncarg not implemented yet
                 if (vals.length > 1) {
                     throw new RuntimeException("vals length > 1");

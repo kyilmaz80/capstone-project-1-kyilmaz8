@@ -23,6 +23,7 @@ public class TokenUtils {
             return false;
         }
         String[] funcArray = str.split("\\(");
+        Arrays.sort(FunctionConstants.ALLOWED_MATH_FUNCTIONS);
         return Arrays.binarySearch(FunctionConstants.ALLOWED_MATH_FUNCTIONS, funcArray[0].toLowerCase()) >= 0;
     }
 
