@@ -1,7 +1,9 @@
-package func;
+package tr.com.kyilmaz80.myparser.func;
+
+import tr.com.kyilmaz80.myparser.utils.StringUtils;
+import tr.com.kyilmaz80.myparser.utils.TokenUtils;
 
 import java.lang.reflect.InvocationTargetException;
-
 public class FunctionCalculator implements Calculator{
     private int functionCount;
     private int currentCount = 0;
@@ -68,7 +70,18 @@ public class FunctionCalculator implements Calculator{
     public MathFunction findFunction(String functionName) {
         //TODO: hashmap version
         for (MathFunction function : functions) {
-            if (functionName.equalsIgnoreCase(function.getName())) {
+            String num = functionName.substring(functionName.length()-1);
+
+            String functionNameStr = StringUtils.removeNumbers(functionName);
+
+            if (functionNameStr.equalsIgnoreCase(function.getName())) {
+
+                if (TokenUtils.isTokenNumerical(num)) {
+                    if (function instanceof MultiArgMathFunction maf) {
+                        maf.setArgCount(Integer.valueOf(num));
+                    }
+                }
+
                return function;
             }
         }
@@ -90,8 +103,9 @@ public class FunctionCalculator implements Calculator{
 
     public void initMathFunctions() {
         for (String functionName : FunctionConstants.ALLOWED_MATH_FUNCTIONS) {
-            String className = "func." + functionName.substring(0, 1).toUpperCase()
-                    + functionName.substring(1) + "Function";
+            String functionNameStr = StringUtils.removeNumbers(functionName);
+            String className = "tr.com.kyilmaz80.myparser.func." + functionNameStr.substring(0, 1).toUpperCase()
+                    + functionNameStr.substring(1) + "Function";
 
             Class<?> clazz = null;
             try {

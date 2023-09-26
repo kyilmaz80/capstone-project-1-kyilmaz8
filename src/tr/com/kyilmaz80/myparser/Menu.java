@@ -1,3 +1,5 @@
+package tr.com.kyilmaz80.myparser;
+import tr.com.kyilmaz80.myparser.utils.StringUtils;
 import java.util.Scanner;
 
 public class Menu {

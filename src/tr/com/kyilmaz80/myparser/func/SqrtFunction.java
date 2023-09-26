@@ -1,9 +1,16 @@
-package func;
+package tr.com.kyilmaz80.myparser.func;
 
 public class SqrtFunction implements SingleArgMathFunction {
+    private static String name = "sqrt";
+
     @Override
     public String getName() {
-        return "sqrt";
+        return name;
+    }
+
+    @Override
+    public void setName(String name) {
+        this.name = name;
     }
 
     @Override

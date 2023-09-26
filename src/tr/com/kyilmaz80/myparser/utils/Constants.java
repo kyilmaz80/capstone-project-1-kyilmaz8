@@ -1,3 +1,5 @@
+package tr.com.kyilmaz80.myparser.utils;
+
 public class Constants {
     public static final String COMMAND_EXIT = "exit";
     public static final String DELIMITERS = "+-*/(), ";

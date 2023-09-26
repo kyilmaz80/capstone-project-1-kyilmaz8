@@ -1,3 +1,5 @@
+package tr.com.kyilmaz80.myparser.utils;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
@@ -20,7 +22,7 @@ public class StackUtils {
     public static double doCalculateFunction(String funcStr, double[] args) {
         double result = -1;
         //String[] funcArray = funcStr.split("\\(");
-        //String func = funcArray[0].toLowerCase();
+        //String tr.com.kyilmaz80.myparser.func = funcArray[0].toLowerCase();
         //double val = double.valueOf(funcs);
         switch (funcStr) {
             case "cos" -> result = Math.cos(args[0]);
@@ -30,13 +32,13 @@ public class StackUtils {
             default -> System.out.println("FUNC NOT IMPLEMENTED!");
         }
         return result;
-        //return Arrays.binarySearch(Constants.ALLOWED_MATH_FUNCTIONS, funcArray[0].toLowerCase()) >= 0;
+        //return Arrays.binarySearch(tr.com.kyilmaz80.myparser.utils.Constants.ALLOWED_MATH_FUNCTIONS, funcArray[0].toLowerCase()) >= 0;
     }
 
 
     public static double doArithmeticOperationOnStack(Stack<String> stack, String tokenString) {
         double val1 = Double.parseDouble(stack.pop());
-        //can be operand or func
+        //can be operand or tr.com.kyilmaz80.myparser.func
         double val2 = Double.parseDouble(stack.pop());
 
         Operators operator = Operators.fromSymbol(tokenString);
@@ -75,7 +77,7 @@ public class StackUtils {
         for (int i = 0; i < varCount; i++) {
             vals[i] = Double.parseDouble(stack.pop());
         }
-        //disregard the func
+        //disregard the tr.com.kyilmaz80.myparser.func
         //stack.pop();
         //stack.push(String.valueOf(result));
         return doCalculateFunction(funcStr, vals);
@@ -107,7 +109,7 @@ public class StackUtils {
         return TokenUtils.isTokenMathFunction(op2);
     }
 
-    static class FuncHelper {
+    public static class FuncHelper {
         public boolean isFunction;
         public int funcArgCount;
         public String name;
@@ -144,6 +146,47 @@ public class StackUtils {
         }
 
         return new FuncHelper(isFunc, arrayList.size(), name);
+    }
+
+    public static Double[] doGetMultiArgFunctionArgsOnStack(Stack<String> stack, int argCount) {
+        String op;
+
+        List<Double> arrayList = new ArrayList();
+        if (stack.isEmpty()) {
+            return null;
+        }
+        op = stack.pop();
+
+        while(!TokenUtils.isTokenMathFunction(op)) {
+            if (stack.isEmpty()) {
+                //throw new RuntimeException("Stack empty in isRecursiveBeforeOnStackIsFunction");
+                break;
+            }
+            Double v = Double.parseDouble(op);
+            arrayList.add(v);
+            op = stack.pop();
+        }
+        String name = op;
+        if (!TokenUtils.isTokenMathFunction(op)) {
+            throw new RuntimeException("multi arg func not came!");
+        }
+
+        //stack.push(op);
+        int sz = arrayList.size();
+        for(int i = sz-1; i >= 0; i--) {
+
+            //sondan 3 ünü al size - 3 den küçükleri remove
+            if (i < (arrayList.size() - argCount)) {
+                stack.push(arrayList.get(i).toString());
+                arrayList.remove(i);
+
+            }
+        }
+
+        Double[] vals = new Double[arrayList.size()];
+        vals = arrayList.toArray(vals);
+
+        return vals;
     }
 
     @Deprecated
@@ -191,7 +234,7 @@ public class StackUtils {
         if (funcStr == null || funcStr.equalsIgnoreCase("")) {
             return -1;
         }
-        //TODO: Functions class i ekleyip Constants'dan otomatik almak gerekebilir.
+        //TODO: Functions class i ekleyip tr.com.kyilmaz80.myparser.utils.Constants'dan otomatik almak gerekebilir.
         switch (funcStr) {
             case "cos", "sin", "sqrt" -> result = 1;
             case "pow" -> result = 2;

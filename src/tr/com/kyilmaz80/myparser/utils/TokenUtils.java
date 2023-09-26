@@ -1,5 +1,7 @@
+package tr.com.kyilmaz80.myparser.utils;
+
 import java.util.Arrays;
-import func.FunctionConstants;
+import tr.com.kyilmaz80.myparser.func.FunctionConstants;
 public class TokenUtils {
 
     public static boolean isTokenOperand(String str) {
@@ -23,8 +25,11 @@ public class TokenUtils {
             return false;
         }
         String[] funcArray = str.split("\\(");
+        //multiarg with variable count functions also func
+        //i.e max3 -> max
+        String functionName = StringUtils.removeNumbers(funcArray[0]).toLowerCase();
         Arrays.sort(FunctionConstants.ALLOWED_MATH_FUNCTIONS);
-        return Arrays.binarySearch(FunctionConstants.ALLOWED_MATH_FUNCTIONS, funcArray[0].toLowerCase()) >= 0;
+        return Arrays.binarySearch(FunctionConstants.ALLOWED_MATH_FUNCTIONS, functionName) >= 0;
     }
 
     public static boolean isTokenValid(String token) {

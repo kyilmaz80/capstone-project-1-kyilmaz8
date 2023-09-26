@@ -1,3 +1,5 @@
+package tr.com.kyilmaz80.myparser.utils;
+
 public class StringUtils {
     public static String removeSpaces(String str) {
         return str.replace(Constants.WHITESPACE, Constants.BLANK);
@@ -19,5 +21,9 @@ public class StringUtils {
         Operators opLast = Operators.fromSymbol(last);
         //TODO: other cases
         sb.append(element);
+    }
+
+    public static String removeNumbers(String str) {
+        return str.replaceAll("\\d", Constants.BLANK);
     }
 }

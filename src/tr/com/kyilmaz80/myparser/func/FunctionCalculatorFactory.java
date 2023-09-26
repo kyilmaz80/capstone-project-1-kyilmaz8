@@ -1,4 +1,5 @@
-import func.*;
+package tr.com.kyilmaz80.myparser.func;
+
 public final class FunctionCalculatorFactory {
     private static FunctionCalculator ff;
 

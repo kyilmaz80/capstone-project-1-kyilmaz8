@@ -1,4 +1,4 @@
-package func;
+package tr.com.kyilmaz80.myparser.func;
 
 public interface Calculator {
     public double doCalculation(String functionName, double arg);
