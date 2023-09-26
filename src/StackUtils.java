@@ -143,7 +143,6 @@ public class StackUtils {
             stack.push(arrayList.get(i));
         }
 
-
         return new FuncHelper(isFunc, arrayList.size(), name);
     }
 

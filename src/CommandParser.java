@@ -108,12 +108,22 @@ public class CommandParser {
                 //String topElementBefore = StackUtils.doGetBeforeLastOnStack(stack);
                 String funcStr;
                 StackUtils.FuncHelper fh = null;
+                String tokenOperand = null;
                 if (varArgs) {
+                    if (TokenUtils.isTokenArithmeticOperator(tokenString)) {
+                        // multi arg var after a token
+                        if (TokenUtils.isTokenMathFunction(stack.peek())) {
+                            tokenOperand = stack.pop();
+                        }
+
+                    }
                     fh = StackUtils.getRecursiveBeforeOnStackIsFunction(stack);
+
                     funcStr = fh.name;
                 } else {
                     funcStr = StackUtils.doGetBeforeLastOnStack(stack);
                 }
+
                 String topElementNext;
 
                 //no func before operator!
@@ -161,6 +171,13 @@ public class CommandParser {
                     //disregard the func
                     stack.pop();
                     stack.push(String.valueOf(result));
+                    if (varArgs) {
+                        // multi arg var after a token
+                        if (TokenUtils.isTokenMathFunction(stack.peek())) {
+                            stack.push(tokenOperand);
+                        }
+
+                    }
                     //is remanining operator operation left?
                     if (TokenUtils.isTokenArithmeticOperator(tokenString)) {
                         result = StackUtils.doArithmeticOperationOnStack(stack, tokenString);
@@ -188,9 +205,18 @@ public class CommandParser {
             }
         }
         while (stack.size() != 1) {
-            if (StackUtils.isOperationOnStackArithmetic(stack)) {
+            if (StackUtils.isOperationOnStackArithmetic(stack) && TokenUtils.isTokenArithmeticOperator(tokenString)) {
                 result = StackUtils.doArithmeticOperationOnStack(stack, tokenString);
+            } else if (varArgs) {
+                //multi arg func case
+                StackUtils.FuncHelper fh = StackUtils.getRecursiveBeforeOnStackIsFunction(stack);
+                Double[] vals = StackUtils.getFuncArgsOnStack(stack, fh.funcArgCount);
+                if (TokenUtils.isTokenMathFunction(stack.peek())) {
+                    stack.pop();
+                }
+                result = fc.doCalculation(fh.name, vals);
             } else {
+                //single arg func case
                 MathFunction function = fc.getFunction(tokenString);
                 if (function == null) {
                     throw new RuntimeException(tokenString + " not found!");

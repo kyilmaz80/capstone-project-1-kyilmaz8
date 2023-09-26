@@ -1,18 +1,20 @@
 public class TestCommandParser {
     public static void main(String[] args) {
         //-enableassertions ile derlenmeli.
-        test1();
-        test2();
-        test3();
-        test4();
-        test5();
-        test6();
-        test7();
-        test8();
-        test9();
-        test10();
-        test11();
-        test12();
+//        test1();
+//        test2();
+//        test3();
+//        test4();
+//        test5();
+//        test6();
+//        test7();
+//        test8();
+//        test9();
+//        test10();
+//        test11();
+//        test12();
+        test13();
+        //test14();
     }
 
     public static void test1() {
@@ -179,6 +181,28 @@ public class TestCommandParser {
         System.out.println(postfixResult);
         Double res = CommandParser.eval(postfixResult);
         assert res == 7.0;
+        System.out.println(res);
+    }
+
+    public static void test13() {
+        String expression = "max(4,5,6)+2";
+        String postfixExpected = "max 4 5 6 2 +";
+        String postfixResult = CommandParser.parse(expression);
+        assert postfixResult.equals(postfixExpected);
+        System.out.println(postfixResult);
+        Double res = CommandParser.eval(postfixResult);
+        assert res == 8.0;
+        System.out.println(res);
+    }
+
+    public static void test14() {
+        String expression = "max(4,5,6)";
+        String postfixExpected = "max 4 5 6";
+        String postfixResult = CommandParser.parse(expression);
+        assert postfixResult.equals(postfixExpected);
+        System.out.println(postfixResult);
+        Double res = CommandParser.eval(postfixResult);
+        assert res == 6.0;
         System.out.println(res);
     }
 
