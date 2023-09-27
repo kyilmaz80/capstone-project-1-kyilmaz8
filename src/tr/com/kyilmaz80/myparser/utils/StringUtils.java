@@ -23,6 +23,14 @@ public class StringUtils {
         sb.append(element);
     }
 
+    public static void doReplaceToPostfixExpression(StringBuilder sb, int argCount) {
+        String str = sb.toString().trim();
+        String[] arr = str.split(Constants.WHITESPACE);
+        String funcNameToFind = arr[arr.length - (argCount + 1)];
+        String newFuncName = funcNameToFind + argCount;
+        int funcIndex = sb.indexOf(funcNameToFind);
+        sb.replace(funcIndex, funcIndex + funcNameToFind.length(), newFuncName);
+    }
     public static String removeNumbers(String str) {
         return str.replaceAll("\\d", Constants.BLANK);
     }

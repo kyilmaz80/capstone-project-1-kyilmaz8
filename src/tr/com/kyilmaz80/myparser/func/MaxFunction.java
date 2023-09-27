@@ -2,13 +2,18 @@ package tr.com.kyilmaz80.myparser.func;
 
 import java.util.Arrays;
 
-public class MaxFunction implements MultiArgMathFunction {
+public class MaxFunction implements MultiArgMathFunction, DoubleArgMathFunction {
 
     public static String name = "max";
     public int argCount = -1;
     @Override
     public String getName() {
         return name;
+    }
+
+    @Override
+    public double calculate(double arg1, double arg2) {
+        return arg1 > arg2 ? arg1 : arg2;
     }
 
     @Override
@@ -25,7 +30,6 @@ public class MaxFunction implements MultiArgMathFunction {
     public void setName(String name) {
        this.name = name;
     }
-
 
 
     @Override

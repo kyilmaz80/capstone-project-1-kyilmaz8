@@ -4,7 +4,7 @@ public class PowFunction implements DoubleArgMathFunction{
     private static String name = "pow";
     @Override
     public double calculate(double arg1, double arg2) {
-        return Math.pow(arg2, arg1);
+        return Math.pow(arg1, arg2);
     }
 
     @Override

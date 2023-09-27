@@ -1,20 +1,24 @@
+package tr.com.kyilmaz80.myparser;
+
 public class TestCommandParser {
     public static void main(String[] args) {
         //-enableassertions ile derlenmeli.
-//        test1();
-//        test2();
-//        test3();
-//        test4();
-//        test5();
-//        test6();
-//        test7();
-//        test8();
-//        test9();
-//        test10();
-//        test11();
-//        test12();
-        test13();
-        //test14();
+        test1();
+        test2();
+        test3();
+        test4();
+        test5();
+        test6();
+        test7();
+        test8();
+        test9();
+        test10();
+        //test11();
+        test12();
+//        test13();
+        test14();
+        test15();
+        test16();
     }
 
     public static void test1() {
@@ -90,6 +94,7 @@ public class TestCommandParser {
         assert CommandParser.eval(CommandParser.parse("5*(4+sqrt(25))")) == 45.0;
         assert CommandParser.eval(CommandParser.parse("5*(4+sqrt(25)*cos(0))")) == 45.0;
         assert CommandParser.eval(CommandParser.parse("5*(4+5)")) == 45.0;
+        System.out.println(CommandParser.eval(CommandParser.parse("5+pow(5,2)")));
         assert CommandParser.eval(CommandParser.parse("5+pow(5,2)")) == 30.0;
         assert CommandParser.eval(CommandParser.parse("5+pow(5,2)*sqrt(4)")) == 55.0;
         System.out.println();
@@ -166,16 +171,17 @@ public class TestCommandParser {
     }
 
     public static void test11() {
-        System.out.println("**********TEST11******************");
+        //mismatch paranthesis
+        System.err.println("**********TEST11******************");
         String expression = "5*cos(0";
-        System.out.println("");
-        System.out.println(expression + ") eksik ) !");
+        System.err.println(expression + ") eksik ) ! Beklenen durum");
         String postfixExp = CommandParser.parse(expression);
     }
 
     public static void test12() {
+        System.out.println("**********TEST12******************");
         String expression = "1+max(4,5,6)";
-        String postfixExpected = "1 max 4 5 6 +";
+        String postfixExpected = "1 max3 4 5 6 +";
         String postfixResult = CommandParser.parse(expression);
         assert postfixResult.equals(postfixExpected);
         System.out.println(postfixResult);
@@ -185,25 +191,52 @@ public class TestCommandParser {
     }
 
     public static void test13() {
+        System.out.println("**********TEST13******************");
         String expression = "max(4,5,6)+2";
-        String postfixExpected = "max 4 5 6 2 +";
+        String postfixExpected = "max3 4 5 6 2 +";
         String postfixResult = CommandParser.parse(expression);
-        assert postfixResult.equals(postfixExpected);
         System.out.println(postfixResult);
+        assert postfixResult.equals(postfixExpected);
         Double res = CommandParser.eval(postfixResult);
         assert res == 8.0;
         System.out.println(res);
     }
 
     public static void test14() {
+        System.out.println("**********TEST14******************");
         String expression = "max(4,5,6)";
-        String postfixExpected = "max 4 5 6";
+        String postfixExpected = "max3 4 5 6";
         String postfixResult = CommandParser.parse(expression);
         assert postfixResult.equals(postfixExpected);
         System.out.println(postfixResult);
         Double res = CommandParser.eval(postfixResult);
         assert res == 6.0;
         System.out.println(res);
+    }
+
+    public static void test15() {
+        System.out.println("**********TEST15******************");
+        String expression = "max(4,1,3,0)";
+        String postfixExpected = "max4 4 1 3 0";
+        String postfixResult = CommandParser.parse(expression);
+        assert postfixResult.equals(postfixExpected);
+        System.out.println(postfixResult);
+        Double res = CommandParser.eval(postfixResult);
+        assert res == 4.0;
+        System.out.println(res);
+    }
+
+    public static void test16() {
+        System.out.println("**********TEST16******************");
+        String expression = "cos(0)+max(3,7)+5";
+        String postfixExpected = "cos 0 max2 3 7 + 5 +";
+        String postfixResult = CommandParser.parse(expression);
+        assert postfixResult.equals(postfixExpected);
+        System.out.println(postfixResult);
+        Double res = CommandParser.eval(postfixResult);
+        System.out.println(res);
+        assert res == 13.0;
+
     }
 
 }

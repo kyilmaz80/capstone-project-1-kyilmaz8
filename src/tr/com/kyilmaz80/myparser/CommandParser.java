@@ -3,6 +3,7 @@ package tr.com.kyilmaz80.myparser;
 import tr.com.kyilmaz80.myparser.func.FunctionCalculator;
 import tr.com.kyilmaz80.myparser.func.FunctionCalculatorFactory;
 import tr.com.kyilmaz80.myparser.func.MathFunction;
+import tr.com.kyilmaz80.myparser.func.MultiArgMathFunction;
 import tr.com.kyilmaz80.myparser.utils.Operators;
 import tr.com.kyilmaz80.myparser.utils.Constants;
 import tr.com.kyilmaz80.myparser.utils.StackUtils;
@@ -13,6 +14,7 @@ import java.util.Stack;
 import java.util.StringTokenizer;
 
 public class CommandParser {
+    public static FunctionCalculator fc = FunctionCalculatorFactory.getInstance();
     public static String parse(String command) {
         return convertToPostfixExpression(StringUtils.removeSpaces(command));
     }
@@ -27,7 +29,8 @@ public class CommandParser {
         //   evaluate it
         //   push back the result of the evaluation
         // repeat until the end of the expression
-        FunctionCalculator fc = FunctionCalculatorFactory.getInstance();
+        //FunctionCalculator fc = FunctionCalculatorFactory.getInstance();
+
         Stack<String> stack = new Stack<>();
         String tokenString = null;
         if (postfixExpression == null) {
@@ -303,6 +306,27 @@ public class CommandParser {
         StringBuilder sb = new StringBuilder();
         StringTokenizer st = new StringTokenizer(infixExpression, Constants.DELIMITERS, true);
         Stack<String> stack = new Stack<>();
+        String funcName = "";
+        boolean leftParanthesisFound = false;
+        boolean funcFound = false;
+        int funcCommaCount = 0;
+        int funcArgCount = 0;
+
+        //TODO: variadic multiarg postfix expression support
+        // if func found flag it
+        // if left parenthesis found
+        //  flag it
+        //  let count of comma count to zero
+        // if func and left paranthesis flag in comma case
+        //  increment comma count
+        // if right parenthesis found
+        //  if func and left paranthesis flag
+        //   let arg count to comma count plus 1
+        //   clear func and left paranthesis flag
+        //   convert sb to str, split with whitespace,
+        //   get the length of array - (arg_count + 1) th item which is func
+        //   found the func before arg count and concat arg count to func
+
         while (st.hasMoreElements()) {
             String tokenString = TokenUtils.filterToken(st.nextToken());
             if (!TokenUtils.isTokenValid(tokenString)) {
@@ -310,9 +334,18 @@ public class CommandParser {
                 return null;
             }
             if (TokenUtils.isTokenOperand(tokenString)) {
+                if (TokenUtils.isTokenMathFunction(tokenString)) {
+                    funcFound = true;
+                    funcCommaCount = 0;
+                    funcName = tokenString;
+                }
                 sb.append(tokenString.concat(Constants.WHITESPACE));
             } else {
                 // token is operator
+                Operators tokenOperator = Operators.fromSymbol(tokenString);
+                if (tokenOperator == Operators.LEFT_PARENTHESES) {
+                    leftParanthesisFound = true;
+                }
                 if (stack.isEmpty()) {
                     stack.push(tokenString);
                 } else {
@@ -324,7 +357,7 @@ public class CommandParser {
 
                     String opOnStack = stack.peek();
                     Operators opOnStackOperator = Operators.fromSymbol(opOnStack);
-                    Operators tokenOperator = Operators.fromSymbol(tokenString);
+
 
                     if (tokenOperator == Operators.LEFT_PARENTHESES) {
                         if (!TokenUtils.isTokenMathFunction(opOnStack)) {
@@ -364,9 +397,25 @@ public class CommandParser {
                         if (topOperator == Operators.LEFT_PARENTHESES) {
                             stack.pop();
                         }
+
+                        // replace the func name with variadic if found
+                        if (funcFound && leftParanthesisFound) {
+                            funcFound = false;
+                            leftParanthesisFound = false;
+                            funcArgCount = ++funcCommaCount;
+                            // change only multi arg variadic func names
+                            // not pow(x,y) like two or sqrt(x)
+                            MathFunction mathFunction = fc.getFunction(funcName);
+                            if (mathFunction instanceof MultiArgMathFunction) {
+                                StringUtils.doReplaceToPostfixExpression(sb, funcArgCount);
+                            }
+                        }
+
+
                         continue;
                     } else if (tokenOperator == Operators.FUNC_VARIABLE_COMMA) {
                         //System.out.println("Comma var");
+                        funcCommaCount++;
                         continue;
                     }
 
