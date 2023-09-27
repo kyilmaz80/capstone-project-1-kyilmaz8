@@ -3,7 +3,7 @@ package func;
 public class PowFunction implements DoubleArgMathFunction{
     @Override
     public double calculate(double arg1, double arg2) {
-        return Math.pow(arg1, arg2);
+        return Math.pow(arg2, arg1);
     }
 
     @Override
