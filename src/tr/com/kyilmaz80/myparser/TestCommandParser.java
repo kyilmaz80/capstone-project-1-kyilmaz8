@@ -176,6 +176,7 @@ public class TestCommandParser {
         String expression = "5*cos(0";
         System.err.println(expression + ") eksik ) ! Beklenen durum");
         String postfixExp = CommandParser.parse(expression);
+        System.err.println(postfixExp);
     }
 
     public static void test12() {
@@ -238,5 +239,6 @@ public class TestCommandParser {
         assert res == 13.0;
 
     }
+
 
 }

@@ -29,7 +29,6 @@ public class CommandParser {
         //   evaluate it
         //   push back the result of the evaluation
         // repeat until the end of the expression
-        //FunctionCalculator fc = FunctionCalculatorFactory.getInstance();
 
         Stack<String> stack = new Stack<>();
         String tokenString = null;
@@ -38,7 +37,6 @@ public class CommandParser {
             System.exit(1);
         }
         StringTokenizer st = new StringTokenizer(postfixExpression, Constants.DELIMITERS, true);
-        //for(char tokenChar: postfixExpression.toCharArray()) {
         while (st.hasMoreElements()) {
             tokenString = TokenUtils.filterToken(st.nextToken());
             if (tokenString.isEmpty()) {
@@ -54,7 +52,6 @@ public class CommandParser {
                     if (function == null) {
                         throw new RuntimeException(funcStr + " not found!");
                     }
-                    //String num = funcStr.substring(funcStr.length()-1);
                     int argCount = function.getArgCount();
                     if (argCount == 2) {
                         stack.push(tokenString);
@@ -67,14 +64,9 @@ public class CommandParser {
                         continue;
                     //} else if (argCount == -1) {
                     } else if (argCount > 2) {
+                        //TODO: are all variadic function arg count > 2 ?
                         stack.push(tokenString);
                         varArgs = true;
-                        /*
-                        Double[] vals = StackUtils.getFuncArgsOnStack(stack);
-                        result = fc.doCalculation(funcStr, vals);
-                        stack.pop();
-                        stack.push(String.valueOf(result));
-                         */
                         continue;
                     }
                 }
@@ -87,7 +79,7 @@ public class CommandParser {
 
                     //if (argCount == 2 || argCount == -1) {
                     if (argCount >= 2) {
-                        varArgs = argCount > 2 ? true : false;
+                        varArgs = argCount > 2;
                         stack.push(tokenString);
                         continue;
                     }
@@ -100,7 +92,6 @@ public class CommandParser {
                     if (TokenUtils.isTokenMathFunction(stack.peek())) {
                         stack.push(tokenString);
                     }
-                    //result = tr.com.kyilmaz80.myparser.utils.StackUtils.doFuncOperationOnStack(stack, funcStr);
                     Double[] vals = StackUtils.getFuncArgsOnStack(stack, argCount);
                     //TODO: arg may be 1 or >2 assume 1 for now since multifuncarg not implemented yet
                     if (vals.length > 1) {
@@ -116,50 +107,29 @@ public class CommandParser {
             } else {
                 // token is operator
                 // if the two elements on stack are operands
-                //String funcStr = tr.com.kyilmaz80.myparser.utils.StackUtils.doGetFuncNameOnStack(stack);
-                //String topElementBefore = tr.com.kyilmaz80.myparser.utils.StackUtils.doGetBeforeLastOnStack(stack);
                 String funcStr;
-                StackUtils.FuncHelper fh = null;
-                String tokenOperand = null;
+                StackUtils.FuncHelper fh;
+                //String tokenOperand = null;
 
                 if (varArgs) {
-
                     if (TokenUtils.isTokenArithmeticOperator(tokenString)) {
                         // multi arg var after a token
                         if (TokenUtils.isTokenMathFunction(stack.peek())) {
-                            tokenOperand = stack.pop();
+                            //tokenOperand = stack.pop();
+                            stack.pop();
                         }
-
                     }
-
                     fh = StackUtils.getRecursiveBeforeOnStackIsFunction(stack);
-
                     funcStr = fh.name;
-
-
                 } else {
                     funcStr = StackUtils.doGetBeforeLastOnStack(stack);
                 }
-
-                String topElementNext;
 
                 //no tr.com.kyilmaz80.myparser.func before operator!
                 //pow case
 
                 MathFunction function = fc.getFunction(funcStr);
-                //if (function == null) {
-                //    throw new RuntimeException(funcStr + " not found!");
-                //}
 
-                /*
-                int argCount = -1;
-                if (function != null && !varArgs) {
-                    argCount = function.getArgCount();
-                } else if (function != null && varArgs) {
-                    argCount = fh.funcArgCount;
-                }
-
-                 */
                 int argCount = -1;
                 if (function != null) {
                     argCount = function.getArgCount();
@@ -167,19 +137,13 @@ public class CommandParser {
 
                 if (TokenUtils.isTokenMathFunction(funcStr) && argCount == 2) {
                     //double valued tr.com.kyilmaz80.myparser.func case
-                    //System.err.println("NOT IMPLEMENTED");
-                    //call by ref!remember! stack!
                     Double[] vals = StackUtils.getFuncArgsOnStack(stack, argCount);
                     result = fc.doCalculation(funcStr, vals[0], vals[1]);
-                    //result = tr.com.kyilmaz80.myparser.utils.StackUtils.doFuncOperationOnStack(stack, funcStr);
-                    //pop the tr.com.kyilmaz80.myparser.func
                     stack.pop();
-                    //push result
                     stack.push(String.valueOf(result));
-                    topElementNext = stack.peek();
+                    //topElementNext = stack.peek();
+                    stack.peek();
                 }
-                //topElementNext = stack.peek();
-                //may be tr.com.kyilmaz80.myparser.func before before operator
                 else if (TokenUtils.isTokenMathFunction(funcStr)) {
 
                     //result = StackUtils.doFuncOperationOnStack(stack, funcStr);
@@ -194,30 +158,6 @@ public class CommandParser {
                         stack.pop();
                         stack.push(String.valueOf(result));
                     }
-                    //TODO: arg may be 1 or >2 assume 1 for now since multifuncarg not implemented yet
-                    //if (vals.length > 1) {
-                    //    throw new RuntimeException("vals length > 1");
-                    //}
-                    /*
-                    if (!varArgs) {
-                        result = fc.doCalculation(funcStr, vals[0]);
-                    } else {
-                        result = fc.doCalculation(funcStr, vals);
-                    }
-
-                     */
-                    //disregard the tr.com.kyilmaz80.myparser.func
-
-                    /*
-                    if (varArgs) {
-                        // multi arg var after a token
-                        if (TokenUtils.isTokenMathFunction(stack.peek())) {
-                            stack.push(tokenOperand);
-                        }
-
-                    }
-
-                     */
                     //is remanining operator operation left?
                     if (TokenUtils.isTokenArithmeticOperator(tokenString)) {
                         result = StackUtils.doArithmeticOperationOnStack(stack, tokenString);
@@ -248,23 +188,6 @@ public class CommandParser {
             if (StackUtils.isOperationOnStackArithmetic(stack) && TokenUtils.isTokenArithmeticOperator(tokenString)) {
                 result = StackUtils.doArithmeticOperationOnStack(stack, tokenString);
             }
-            /*
-            else if (varArgs) {
-                //multi arg tr.com.kyilmaz80.myparser.func case
-                //StackUtils.FuncHelper fh = StackUtils.getRecursiveBeforeOnStackIsFunction(stack);
-                MathFunction function = fc.getFunction(tokenString);
-                if (function == null) {
-                    throw new RuntimeException(tokenString + " not found!");
-                }
-                int argCount = function.getArgCount();
-                //Double[] vals = StackUtils.getFuncArgsOnStack(stack, fh.funcArgCount);
-                Double[] vals = StackUtils.getFuncArgsOnStack(stack, argCount);
-                if (TokenUtils.isTokenMathFunction(stack.peek())) {
-                    stack.pop();
-                }
-                result = fc.doCalculation(fh.name, vals);
-            }
-            */
             else {
                 //single arg tr.com.kyilmaz80.myparser.func case
                 MathFunction function;
@@ -285,17 +208,6 @@ public class CommandParser {
                     vals = StackUtils.doGetMultiArgFunctionArgsOnStack(stack, argCount);
                     result = fc.doCalculation(fh.name, vals);
                 }
-
-
-                //TODO: arg may be 1 or >2 assume 1 for now since multifuncarg not implemented yet
-                /*
-                if (vals.length > 1) {
-                    throw new RuntimeException("vals length > 1");
-                }
-
-                 */
-
-                //result = tr.com.kyilmaz80.myparser.utils.StackUtils.doFuncOperationOnStack(stack, tokenString);
             }
             stack.push(String.valueOf(result));
         }
@@ -310,9 +222,9 @@ public class CommandParser {
         boolean leftParanthesisFound = false;
         boolean funcFound = false;
         int funcCommaCount = 0;
-        int funcArgCount = 0;
+        int funcArgCount;
 
-        //TODO: variadic multiarg postfix expression support
+        // variadic multiarg postfix expression support
         // if func found flag it
         // if left parenthesis found
         //  flag it
@@ -330,7 +242,7 @@ public class CommandParser {
         while (st.hasMoreElements()) {
             String tokenString = TokenUtils.filterToken(st.nextToken());
             if (!TokenUtils.isTokenValid(tokenString)) {
-                System.err.println(tokenString + " token i beklenmedik!");
+                System.err.println(tokenString + " token unexpected !");
                 return null;
             }
             if (TokenUtils.isTokenOperand(tokenString)) {
@@ -382,8 +294,6 @@ public class CommandParser {
                                 //return null;
                                 System.err.println("Stack empty @RIGHT PARENTHESIS");
                                 break;
-
-
                             }
                             //pop the operator from the operator stack into the output queue (sb)
                             StringUtils.doAppendOperatorToPostfixExpression(sb, stack.pop().concat(Constants.WHITESPACE));
@@ -398,7 +308,7 @@ public class CommandParser {
                             stack.pop();
                         }
 
-                        // replace the func name with variadic if found
+                        // replace the func name with argCount for variadic if found
                         if (funcFound && leftParanthesisFound) {
                             funcFound = false;
                             leftParanthesisFound = false;
@@ -411,7 +321,6 @@ public class CommandParser {
                             }
                         }
 
-
                         continue;
                     } else if (tokenOperator == Operators.FUNC_VARIABLE_COMMA) {
                         //System.out.println("Comma var");
@@ -419,11 +328,9 @@ public class CommandParser {
                         continue;
                     }
 
-                    /*if ((opOnStackOperator.isOperatorHighestPriorityFrom(tokenOperator) ||
-                        opOnStackOperator.isOperatorSamePriorityTo(tokenOperator)) &&
-                            opOnStackOperator != tokenOperator) {
-                     */
-
+                    if (opOnStackOperator == null || tokenOperator == null) {
+                        throw new RuntimeException("operator null unexpected!");
+                    }
                     if (opOnStackOperator.isOperatorHighestPriorityFrom(tokenOperator) ||
                             opOnStackOperator.isOperatorSamePriorityTo(tokenOperator) ||
                             opOnStackOperator == tokenOperator) {
@@ -452,9 +359,6 @@ public class CommandParser {
             System.err.println("Mismatched parentheses problem!");
             return null;
         }
-
         return sb.toString().trim();
     }
-
-
 }

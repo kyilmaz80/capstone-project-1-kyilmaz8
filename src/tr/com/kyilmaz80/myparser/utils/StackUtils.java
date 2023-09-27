@@ -42,6 +42,9 @@ public class StackUtils {
         double val2 = Double.parseDouble(stack.pop());
 
         Operators operator = Operators.fromSymbol(tokenString);
+        if (operator == null) {
+            throw new RuntimeException("Operator null unexpected!");
+        }
         return StackUtils.doOperation(val1, val2, operator);
         //stack.push(String.valueOf(result));
     }
@@ -54,9 +57,10 @@ public class StackUtils {
         return vals;
     }
 
+    @Deprecated
     public static Double[] getFuncArgsOnStack(Stack<String> stack) {
         //double[] vals = new double[varCount];
-        List<Double> arrayList = new ArrayList();
+        List<Double> arrayList = new ArrayList<>();
         while(TokenUtils.isTokenNumerical(stack.peek())) {
             //TODO: stack empty case?
             Double v = Double.parseDouble(stack.pop());
@@ -96,7 +100,6 @@ public class StackUtils {
         return TokenUtils.isTokenMathFunction(op1) && TokenUtils.isTokenMathFunction(op2);
     }
 
-    @Deprecated
     public static boolean isBeforeLastOnStackIsFunction(Stack<String> stack) {
         if (stack.size() < 2) {
             return false;
@@ -121,7 +124,7 @@ public class StackUtils {
     }
     public static FuncHelper getRecursiveBeforeOnStackIsFunction(Stack<String> stack) {
         String op;
-        List<String> arrayList = new ArrayList();
+        List<String> arrayList = new ArrayList<>();
         if (stack.isEmpty()) {
             return new FuncHelper(false, 0, null);
         }
@@ -151,7 +154,7 @@ public class StackUtils {
     public static Double[] doGetMultiArgFunctionArgsOnStack(Stack<String> stack, int argCount) {
         String op;
 
-        List<Double> arrayList = new ArrayList();
+        List<Double> arrayList = new ArrayList<>();
         if (stack.isEmpty()) {
             return null;
         }
@@ -166,7 +169,7 @@ public class StackUtils {
             arrayList.add(v);
             op = stack.pop();
         }
-        String name = op;
+        //String name = op;
         if (!TokenUtils.isTokenMathFunction(op)) {
             throw new RuntimeException("multi arg func not came!");
         }
@@ -189,7 +192,6 @@ public class StackUtils {
         return vals;
     }
 
-    @Deprecated
     public static String doGetBeforeLastOnStack(Stack<String> stack) {
         if (stack.size() < 2) {
             return null;

@@ -6,7 +6,7 @@ public class Main {
         String command;
         do {
             command = Menu.getInput();
-            if (command.equals(Constants.COMMAND_EXIT)) {
+            if (command.equalsIgnoreCase(Constants.COMMAND_EXIT)) {
                 break;
             }
             String parsedCommand = CommandParser.parse(command);
@@ -17,7 +17,7 @@ public class Main {
             Menu.printOutput();
             Double result = CommandParser.eval(parsedCommand);
             System.out.println(result);
-        } while (!command.equals(Constants.COMMAND_EXIT));
+        } while (true);
         Menu.exit();
     }
 }

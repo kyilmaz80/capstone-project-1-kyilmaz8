@@ -17,8 +17,4 @@ public class PowFunction implements DoubleArgMathFunction{
         this.name = name;
     }
 
-    @Override
-    public int getArgCount() {
-        return 2;
-    }
 }
