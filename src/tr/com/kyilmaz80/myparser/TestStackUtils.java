@@ -1,7 +1,6 @@
 package tr.com.kyilmaz80.myparser;
 
 import tr.com.kyilmaz80.myparser.utils.Constants;
-import tr.com.kyilmaz80.myparser.utils.StackUtils;
 
 import java.util.Stack;
 import java.util.StringTokenizer;
@@ -29,8 +28,6 @@ public class TestStackUtils {
     public static void main(String[] args) {
         String postfix = "5 4 6";
         TestStackUtils tsu  = new TestStackUtils(postfix);
-
-
 
     }
 

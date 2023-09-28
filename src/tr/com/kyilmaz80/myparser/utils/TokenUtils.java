@@ -9,7 +9,7 @@ public class TokenUtils {
     }
 
     public static boolean isTokenNumerical(String str) {
-        if (str.equals("")) {
+        if (str.isEmpty()) {
             return false;
         }
         try {
@@ -26,7 +26,7 @@ public class TokenUtils {
         }
         String[] funcArray = str.split("\\(");
         //multiarg with variable count functions also func
-        //i.e max3 -> max
+        //max3 -> max
         String functionName = StringUtils.removeNumbers(funcArray[0]).toLowerCase();
         Arrays.sort(FunctionConstants.ALLOWED_MATH_FUNCTIONS);
         return Arrays.binarySearch(FunctionConstants.ALLOWED_MATH_FUNCTIONS, functionName) >= 0;
@@ -53,8 +53,4 @@ public class TokenUtils {
         return op != null;
     }
 
-    public static boolean isTokenParentheses(String token) {
-        Operators op = Operators.fromSymbol(token);
-        return op == Operators.LEFT_PARENTHESES || op == Operators.RIGHT_PARENTHESES;
-    }
 }

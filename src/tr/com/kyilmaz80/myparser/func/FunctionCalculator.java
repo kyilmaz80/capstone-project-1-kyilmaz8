@@ -5,13 +5,10 @@ import tr.com.kyilmaz80.myparser.utils.TokenUtils;
 
 import java.lang.reflect.InvocationTargetException;
 public class FunctionCalculator implements Calculator{
-    private int functionCount;
     private int currentCount = 0;
-    private MathFunction[] functions;
-    private double argument;
+    private final MathFunction[] functions;
 
     public FunctionCalculator(int functionCount) {
-        this.functionCount = functionCount;
         functions = new MathFunction[functionCount];
         initMathFunctions();
     }
@@ -78,7 +75,7 @@ public class FunctionCalculator implements Calculator{
 
                 if (TokenUtils.isTokenNumerical(num)) {
                     if (function instanceof MultiArgMathFunction maf) {
-                        maf.setArgCount(Integer.valueOf(num));
+                        maf.setArgCount(Integer.parseInt(num));
                     }
                 }
 
@@ -107,7 +104,7 @@ public class FunctionCalculator implements Calculator{
             String className = "tr.com.kyilmaz80.myparser.func." + functionNameStr.substring(0, 1).toUpperCase()
                     + functionNameStr.substring(1) + "Function";
 
-            Class<?> clazz = null;
+            Class<?> clazz;
             try {
                 // Load the class
                 clazz = Class.forName(className);
@@ -122,19 +119,6 @@ public class FunctionCalculator implements Calculator{
                 if (obj instanceof MathFunction) {
                     MathFunction mf = (MathFunction) obj;
                     this.addFunction(mf);
-                    /*
-                    if (mf instanceof SingleArgMathFunction) {
-                        SingleArgMathFunction saf = (SingleArgMathFunction) mf;
-                        calculator1.addFunction(saf);
-                        //double result = saf.calculate(0); // Replace 0 with the desired argument
-                        //System.out.println(functionName + "(0) = " + result);
-                    }else if(mf instanceof DoubleArgMathFunction) {
-                        DoubleArgMathFunction daf = (DoubleArgMathFunction) mf;
-                        calculator1.addFunction(daf);
-                    } else {
-                        System.out.println(functionName + " is not implemented as a ArgMathFunction.");
-                    }
-                     */
                 } else {
                     System.out.println(functionName + " is not a MathFunction.");
                 }
@@ -146,7 +130,6 @@ public class FunctionCalculator implements Calculator{
         }
 
     }
-
     @Override
     public void listMathFunction() {
         System.out.println("Available Functions:");

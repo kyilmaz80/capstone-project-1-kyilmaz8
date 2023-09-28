@@ -7,10 +7,8 @@ import tr.com.kyilmaz80.myparser.utils.StackUtils;
 import tr.com.kyilmaz80.myparser.utils.StringUtils;
 import tr.com.kyilmaz80.myparser.utils.TokenUtils;
 
-import javax.swing.*;
 import java.util.Stack;
 import java.util.StringTokenizer;
-import java.util.TooManyListenersException;
 
 public class CommandParser {
     public static FunctionCalculator fc = FunctionCalculatorFactory.getInstance();
@@ -20,12 +18,12 @@ public class CommandParser {
 
 
     public static Double eval(String postfixExpression) {
-        Double result;
+        //Double result;
         Stack<String> stack = new Stack<>();
         Stack<String> opStack = new Stack<>();
         String tokenString;
         if (postfixExpression == null) {
-            System.err.println("Beklenmeyen postfix ifadesi null!");
+            System.err.println("Postfix expression null unexpected!");
             System.exit(1);
         }
         StringTokenizer st = new StringTokenizer(postfixExpression, Constants.DELIMITERS, true);
@@ -88,7 +86,7 @@ public class CommandParser {
                         }
                     }
                     //do the remaining arithmetic
-                    if (opStack.size() != 0) {
+                    if (!opStack.isEmpty()) {
                         if (StackUtils.isLastTwoNumOnStack(stack)) {
                             if (!StackUtils.doCalculateArithmeticOnStack(stack, opStack.pop())){
                                 throw new RuntimeException("Arithmetic operation problem on stack!");

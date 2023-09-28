@@ -13,7 +13,7 @@ public class MaxFunction implements MultiArgMathFunction, DoubleArgMathFunction 
 
     @Override
     public double calculate(double arg1, double arg2) {
-        return arg1 > arg2 ? arg1 : arg2;
+        return Math.max(arg1, arg2);
     }
 
     @Override

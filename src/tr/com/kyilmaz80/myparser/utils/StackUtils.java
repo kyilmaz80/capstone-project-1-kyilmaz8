@@ -5,8 +5,6 @@ import tr.com.kyilmaz80.myparser.func.MathFunction;
 import tr.com.kyilmaz80.myparser.func.MultiArgMathFunction;
 import tr.com.kyilmaz80.myparser.func.SingleArgMathFunction;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Stack;
 import java.util.StringTokenizer;
 
@@ -91,6 +89,10 @@ public class StackUtils {
         //pop the func
         if(TokenUtils.isTokenMathFunction(stack.peek())) {
             stack.pop();
+        }
+
+        if (numVal == null) {
+            throw new RuntimeException("numVal null unexpected in doCalculateFuncOnStack");
         }
 
         if (mf instanceof SingleArgMathFunction samf) {

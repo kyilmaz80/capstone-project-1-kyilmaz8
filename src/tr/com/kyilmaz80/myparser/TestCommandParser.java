@@ -1,7 +1,5 @@
 package tr.com.kyilmaz80.myparser;
 
-import tr.com.kyilmaz80.myparser.utils.Constants;
-
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
@@ -281,7 +279,7 @@ public class TestCommandParser {
         String postfixExpected = "1 max3 4 5 1 + 3 +";
         String postfixResult = CommandParser.parse(expression);
         System.out.println(postfixResult);
-        //assert postfixResult.equals(postfixExpected);
+        assert postfixResult.equals(postfixExpected);
         Double res = CommandParser.eval(postfixResult);
         System.out.println(res);
         assert res == 9.0;
