@@ -63,33 +63,6 @@ public class CommandParser {
                     if (!StackUtils.doCalculateFuncOnStack(stack, mf, st)) {
                         throw new RuntimeException("Func operation problem on stack!");
                     }
-                    /*
-                    Double calcVal;
-                    if (mf instanceof SingleArgMathFunction samf) {
-                        double val = Double.parseDouble(tokenString);
-                        calcVal = samf.calculate(val);
-                        stack.push(calcVal.toString());
-                    }else if (mf instanceof DoubleArgMathFunction damf) {
-                        double val = Double.parseDouble(tokenString);
-                        st.nextToken(); //ignore whitespace
-                        double nextVal = Double.parseDouble(TokenUtils.filterToken(st.nextToken()));
-                        calcVal = damf.calculate(val, nextVal);
-                        stack.push(calcVal.toString());
-                    }else if (mf instanceof MultiArgMathFunction mamf) {
-                        int count = mamf.getArgCount();
-                        Double[] vals = new Double[count];
-                        for (int i = 0; i < count; i++) {
-                            st.nextToken();  //ignore whitespace
-                            vals[i] = Double.parseDouble(TokenUtils.filterToken(st.nextToken()));
-                        }
-                        calcVal = mamf.calculate(vals);
-                        stack.push(calcVal.toString());
-                    }else {
-                        System.err.println("NOT IMPLEMENTED FUNC TYPE!");
-                    }
-
-                     */
-
                 }
             } else if(TokenUtils.isTokenMathFunction(tokenString)) {
                 stack.push(tokenString);
@@ -99,11 +72,6 @@ public class CommandParser {
                 // do arithmetical operation
                 opStack.push(tokenString);
                 if (StackUtils.isLastTwoNumOnStack(stack)) {
-                    /*
-                    result = StackUtils.doArithmeticOperationOnStack(stack, tokenString);
-                    stack.push(result.toString());
-                    opStack.pop();
-                     */
                     if (!StackUtils.doCalculateArithmeticOnStack(stack, tokenString)){
                         throw new RuntimeException("Arithmetic operation problem on stack!");
                     }
@@ -119,14 +87,9 @@ public class CommandParser {
                             throw new RuntimeException("Func operation problem on stack!");
                         }
                     }
-                    //remaining arithmetic
+                    //do the remaining arithmetic
                     if (opStack.size() != 0) {
                         if (StackUtils.isLastTwoNumOnStack(stack)) {
-                            /*
-                            result = StackUtils.doArithmeticOperationOnStack(stack, opStack.pop());
-                            stack.push(result.toString());
-                            //opStack.pop();
-                             */
                             if (!StackUtils.doCalculateArithmeticOnStack(stack, opStack.pop())){
                                 throw new RuntimeException("Arithmetic operation problem on stack!");
                             }

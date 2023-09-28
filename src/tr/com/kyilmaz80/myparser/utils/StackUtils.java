@@ -167,7 +167,7 @@ public class StackUtils {
             double val = Double.parseDouble(numVal);
             calcVal = samf.calculate(val);
             stack.push(calcVal.toString());
-        }else if (mf instanceof DoubleArgMathFunction damf) {
+        }else if (mf instanceof DoubleArgMathFunction damf && damf.getArgCount() == 2) {
             double val = Double.parseDouble(numVal);
             st.nextToken(); //ignore whitespace
             double nextVal = Double.parseDouble(TokenUtils.filterToken(st.nextToken()));
@@ -176,7 +176,8 @@ public class StackUtils {
         }else if (mf instanceof MultiArgMathFunction mamf) {
             int count = mamf.getArgCount();
             Double[] vals = new Double[count];
-            for (int i = 0; i < count; i++) {
+            vals[0] = Double.parseDouble(numVal);
+            for (int i = 1; i < count; i++) {
                 st.nextToken();  //ignore whitespace
                 vals[i] = Double.parseDouble(TokenUtils.filterToken(st.nextToken()));
             }
