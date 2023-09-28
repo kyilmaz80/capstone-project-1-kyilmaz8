@@ -37,9 +37,24 @@ public class StackUtils {
 
 
     public static double doArithmeticOperationOnStack(Stack<String> stack, String tokenString) {
-        double val1 = Double.parseDouble(stack.pop());
+        if (stack.isEmpty()) {
+            throw new RuntimeException("Stack empty!");
+        }
+        String p1 = "";
+        String p2 = "";
+
+        if (stack.size() < 2) {
+            throw new RuntimeException("Stack size too small for arithmetic operation!");
+        }
+        if (TokenUtils.isTokenNumerical(stack.peek())) {
+            p1 = stack.pop();
+        }
+        if (TokenUtils.isTokenNumerical(stack.peek())) {
+            p2 = stack.pop();
+        }
+        double val1 = Double.parseDouble(p1);
         //can be operand or tr.com.kyilmaz80.myparser.func
-        double val2 = Double.parseDouble(stack.pop());
+        double val2 = Double.parseDouble(p2);
 
         Operators operator = Operators.fromSymbol(tokenString);
         if (operator == null) {
@@ -228,9 +243,11 @@ public class StackUtils {
     }
 
     public static boolean isOperationOnStackFunc(Stack<String> stack) {
-        return !isOperationOnStackArithmetic(stack);
+        StackUtils.FuncHelper fh = getRecursiveBeforeOnStackIsFunction(stack);
+        return fh.isFunction;
     }
 
+    @Deprecated
     public static int getFunctionArgCount(String funcStr) {
         int result = 0;
         if (funcStr == null || funcStr.equalsIgnoreCase("")) {

@@ -1,9 +1,6 @@
 package tr.com.kyilmaz80.myparser;
 
-import tr.com.kyilmaz80.myparser.func.FunctionCalculator;
-import tr.com.kyilmaz80.myparser.func.FunctionCalculatorFactory;
-import tr.com.kyilmaz80.myparser.func.MathFunction;
-import tr.com.kyilmaz80.myparser.func.MultiArgMathFunction;
+import tr.com.kyilmaz80.myparser.func.*;
 import tr.com.kyilmaz80.myparser.utils.Operators;
 import tr.com.kyilmaz80.myparser.utils.Constants;
 import tr.com.kyilmaz80.myparser.utils.StackUtils;
@@ -19,19 +16,11 @@ public class CommandParser {
         return convertToPostfixExpression(StringUtils.removeSpaces(command));
     }
 
+
     public static Double eval(String postfixExpression) {
         Double result;
-        boolean varArgs = false;
-        // read the expression from left to right
-        // push the element in to a stack if it is operand
-        // if the current character is an operator,
-        //   pop the two operands from the stack and
-        //   evaluate it
-        //   push back the result of the evaluation
-        // repeat until the end of the expression
-
         Stack<String> stack = new Stack<>();
-        String tokenString = null;
+        String tokenString;
         if (postfixExpression == null) {
             System.err.println("Beklenmeyen postfix ifadesi null!");
             System.exit(1);
@@ -42,174 +31,60 @@ public class CommandParser {
             if (tokenString.isEmpty()) {
                 continue;
             }
-            if (TokenUtils.isTokenMathFunction(tokenString)) {
-                stack.push(tokenString);
-            } else if (TokenUtils.isTokenOperand(tokenString)) {
-                if (StackUtils.isBeforeLastOnStackIsFunction(stack)) {
-                    String funcStr = StackUtils.doGetBeforeLastOnStack(stack);
-                    //if (tr.com.kyilmaz80.myparser.utils.StackUtils.getFunctionArgCount(funcStr) == 2) {
-                    MathFunction function = fc.getFunction(funcStr);
-                    if (function == null) {
-                        throw new RuntimeException(funcStr + " not found!");
-                    }
-                    int argCount = function.getArgCount();
-                    if (argCount == 2) {
-                        stack.push(tokenString);
-                        Double[] vals = StackUtils.getFuncArgsOnStack(stack, argCount);
-                        //result = tr.com.kyilmaz80.myparser.utils.StackUtils.doFuncOperationOnStack(stack, funcStr);
-                        result = fc.doCalculation(funcStr, vals[1], vals[0]);
-                        stack.pop();
-                        stack.push(String.valueOf(result));
-                        varArgs = false;
-                        continue;
-                    //} else if (argCount == -1) {
-                    } else if (argCount > 2) {
-                        //TODO: are all variadic function arg count > 2 ?
-                        stack.push(tokenString);
-                        varArgs = true;
-                        continue;
-                    }
-                }
-                if (!stack.isEmpty() && TokenUtils.isTokenMathFunction(stack.peek())) {
-                    //single valued variable icin
-                    String funcStr = stack.peek();
-                    MathFunction function = fc.getFunction(funcStr);
-
-                    int argCount = function.getArgCount();
-
-                    //if (argCount == 2 || argCount == -1) {
-                    if (argCount >= 2) {
-                        varArgs = argCount > 2;
-                        stack.push(tokenString);
-                        continue;
-                    }
-
-                    if (StackUtils.isLastTwoFuncOnStack(stack)) {
-                        //nested tr.com.kyilmaz80.myparser.func case
-                        stack.push(tokenString);
-                    }
-                    //push back val for tr.com.kyilmaz80.myparser.func
-                    if (TokenUtils.isTokenMathFunction(stack.peek())) {
-                        stack.push(tokenString);
-                    }
-                    Double[] vals = StackUtils.getFuncArgsOnStack(stack, argCount);
-                    //TODO: arg may be 1 or >2 assume 1 for now since multifuncarg not implemented yet
-                    if (vals.length > 1) {
-                        throw new RuntimeException("vals length > 1");
-                    }
-                    result = fc.doCalculation(funcStr, vals[0]);
-                    stack.pop();
-                    stack.push(String.valueOf(result));
-                } else {
+            if (TokenUtils.isTokenNumerical(tokenString)) {
+                // if stack is not empty and stack peek is single valued func
+                //   pop the func and calculate func
+                //   push the result to stack
+                // else if stack is not empty and stack peek is double valued func
+                //   get the nextToken, pop the func and calculate with args tokenString,nextToken
+                //   push the result to stack
+                // else if stack is not empty and stack peek is multi arg variadic func
+                //   get the func args x count then get the next x tokens
+                //   calculate the variadic func with these args
+                //   push the result to stack
+                if (stack.isEmpty() || TokenUtils.isTokenNumerical(stack.peek())) {
                     stack.push(tokenString);
-                }
-
-            } else {
-                // token is operator
-                // if the two elements on stack are operands
-                String funcStr;
-                StackUtils.FuncHelper fh;
-                //String tokenOperand = null;
-
-                if (varArgs) {
-                    if (TokenUtils.isTokenArithmeticOperator(tokenString)) {
-                        // multi arg var after a token
-                        if (TokenUtils.isTokenMathFunction(stack.peek())) {
-                            //tokenOperand = stack.pop();
-                            stack.pop();
-                        }
-                    }
-                    fh = StackUtils.getRecursiveBeforeOnStackIsFunction(stack);
-                    funcStr = fh.name;
-                } else {
-                    funcStr = StackUtils.doGetBeforeLastOnStack(stack);
-                }
-
-                //no tr.com.kyilmaz80.myparser.func before operator!
-                //pow case
-
-                MathFunction function = fc.getFunction(funcStr);
-
-                int argCount = -1;
-                if (function != null) {
-                    argCount = function.getArgCount();
-                }
-
-                if (TokenUtils.isTokenMathFunction(funcStr) && argCount == 2) {
-                    //double valued tr.com.kyilmaz80.myparser.func case
-                    Double[] vals = StackUtils.getFuncArgsOnStack(stack, argCount);
-                    result = fc.doCalculation(funcStr, vals[0], vals[1]);
-                    stack.pop();
-                    stack.push(String.valueOf(result));
-                    //topElementNext = stack.peek();
-                    stack.peek();
-                }
-                else if (TokenUtils.isTokenMathFunction(funcStr)) {
-
-                    //result = StackUtils.doFuncOperationOnStack(stack, funcStr);
-                    Double[] vals;
-                    if (varArgs) {
-                        vals = StackUtils.doGetMultiArgFunctionArgsOnStack(stack, argCount);
-                        result = fc.doCalculation(funcStr, vals);
-                        stack.push(String.valueOf(result));
-                    }else {
-                        vals = StackUtils.getFuncArgsOnStack(stack, argCount);
-                        result = fc.doCalculation(funcStr, vals[0]);
-                        stack.pop();
-                        stack.push(String.valueOf(result));
-                    }
-                    //is remanining operator operation left?
-                    if (TokenUtils.isTokenArithmeticOperator(tokenString)) {
-                        result = StackUtils.doArithmeticOperationOnStack(stack, tokenString);
-                        stack.push(String.valueOf(result));
-                    }
-                } else {
-                    if (StackUtils.isOperationOnStackFunc(stack)) {
-                        funcStr = StackUtils.doGetBeforeLastOnStack(stack);
-                        Double[] vals = StackUtils.getFuncArgsOnStack(stack, argCount);
-                        result = fc.doCalculation(funcStr, vals);
-                        //result = tr.com.kyilmaz80.myparser.utils.StackUtils.doFuncOperationOnStack(stack, funcStr);
-                        //pop the tr.com.kyilmaz80.myparser.func
-                        stack.pop();
-                    } else {
-                        result = StackUtils.doArithmeticOperationOnStack(stack, tokenString);
-                        if (result == -1) {
-                            //error condition unexpected operator
-                            //not a +-/* operator
-                            //System.exit(1);
-                            return null;
-                        }
-                    }
-                    stack.push(String.valueOf(result));
-                }
-            }
-        }
-        while (stack.size() != 1) {
-            if (StackUtils.isOperationOnStackArithmetic(stack) && TokenUtils.isTokenArithmeticOperator(tokenString)) {
-                result = StackUtils.doArithmeticOperationOnStack(stack, tokenString);
-            }
-            else {
-                //single arg tr.com.kyilmaz80.myparser.func case
-                MathFunction function;
-                int argCount;
-                Double[] vals;
-                if (!varArgs) {
-                    function = fc.getFunction(tokenString);
-                    if (function == null) {
-                        throw new RuntimeException(tokenString + " not found!");
-                    }
-                    argCount = function.getArgCount();
-                    vals = StackUtils.getFuncArgsOnStack(stack, argCount);
-                    result = fc.doCalculation(tokenString, vals[0]);
                 }else {
-                    StackUtils.FuncHelper fh = StackUtils.getRecursiveBeforeOnStackIsFunction(stack);
-                    function =  fc.getFunction(fh.name);
-                    argCount = function.getArgCount();
-                    vals = StackUtils.doGetMultiArgFunctionArgsOnStack(stack, argCount);
-                    result = fc.doCalculation(fh.name, vals);
+                    // arg parent may be single, double or multi arg func
+                    MathFunction mf = fc.getFunction(stack.peek());
+                    if (mf == null) {
+                        System.err.println("not a func mf null");
+                        continue;
+                    }
+                    //pop the func
+                    stack.pop();
+                    Double calcVal;
+                    if (mf instanceof SingleArgMathFunction samf) {
+                        double val = Double.parseDouble(tokenString);
+                        calcVal = samf.calculate(val);
+                        stack.push(calcVal.toString());
+                    }else if (mf instanceof DoubleArgMathFunction damf) {
+                        double val = Double.parseDouble(tokenString);
+                        double nextVal = Double.parseDouble(TokenUtils.filterToken(st.nextToken()));
+                        calcVal = damf.calculate(val, nextVal);
+                        stack.push(calcVal.toString());
+                    }else if (mf instanceof MultiArgMathFunction mamf) {
+                        int count = mamf.getArgCount();
+                        Double[] vals = new Double[count];
+                        for (int i = 0; i < count; i++) {
+                            vals[i] = Double.parseDouble(TokenUtils.filterToken(st.nextToken()));
+                        }
+                        calcVal = mamf.calculate(vals);
+                        stack.push(calcVal.toString());
+                    }else {
+                        System.err.println("NOT IMPLEMENTED FUNC TYPE!");
+                    }
+
                 }
+            } else if(TokenUtils.isTokenMathFunction(tokenString)) {
+                stack.push(tokenString);
+            }else if (TokenUtils.isTokenArithmeticOperator(tokenString)) {
+                //pop the top two operands
+                //if the two operands are numerical
+                // do arithmetical operation
+                result = StackUtils.doArithmeticOperationOnStack(stack, tokenString);
+                stack.push(result.toString());
             }
-            stack.push(String.valueOf(result));
         }
         return Double.parseDouble(stack.pop());
     }
