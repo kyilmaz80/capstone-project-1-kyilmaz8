@@ -146,16 +146,19 @@ public class TestCommandParser {
 
     public static void test7() {
         System.out.println("**********TEST7******************");
-        assert CommandParser.eval(CommandParser.parse("5*(4+sqrt(pow(5,2)))")) == 45.0;
+        //String postfixExpression = CommandParser.parse("5*(4+sqrt(pow(5,2)))");
+        //assert CommandParser.eval(postfixExpression) == 45.0;
         //5 4 sqrt pow 5 2 + *
         String expression1 = "5*(4+sqrt(pow(5,2)))";
         //String expression = "5*(4+sqrt(25))";
         String postfixExpression1 = CommandParser.parse(expression1);
+        System.out.println(postfixExpression1);
+        assert postfixExpression1.equalsIgnoreCase("5 4 sqrt pow 5 2 + *");
         Double res1 = CommandParser.eval(postfixExpression1);
         System.out.println(expression1);
         System.out.println(postfixExpression1);
-        System.out.println("res1: " + res1);
-        //assert CommandParser.eval(postfixExpression1) == 45.0;
+        System.out.println("5*(4+sqrt(pow(5,2))) = " + res1);
+        assert res1 == 45.0;
 
     }
 

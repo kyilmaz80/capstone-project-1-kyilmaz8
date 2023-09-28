@@ -1,8 +1,14 @@
 package tr.com.kyilmaz80.myparser.utils;
 
+import tr.com.kyilmaz80.myparser.func.DoubleArgMathFunction;
+import tr.com.kyilmaz80.myparser.func.MathFunction;
+import tr.com.kyilmaz80.myparser.func.MultiArgMathFunction;
+import tr.com.kyilmaz80.myparser.func.SingleArgMathFunction;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
+import java.util.StringTokenizer;
 
 public class StackUtils {
     public static double doOperation(double val1, double val2, Operators op) {
@@ -40,21 +46,14 @@ public class StackUtils {
         if (stack.isEmpty()) {
             throw new RuntimeException("Stack empty!");
         }
-        String p1 = "";
-        String p2 = "";
 
         if (stack.size() < 2) {
             throw new RuntimeException("Stack size too small for arithmetic operation!");
         }
-        if (TokenUtils.isTokenNumerical(stack.peek())) {
-            p1 = stack.pop();
-        }
-        if (TokenUtils.isTokenNumerical(stack.peek())) {
-            p2 = stack.pop();
-        }
-        double val1 = Double.parseDouble(p1);
+
+        double val1 = Double.parseDouble(stack.pop());
         //can be operand or tr.com.kyilmaz80.myparser.func
-        double val2 = Double.parseDouble(p2);
+        double val2 = Double.parseDouble(stack.pop());
 
         Operators operator = Operators.fromSymbol(tokenString);
         if (operator == null) {
@@ -115,6 +114,18 @@ public class StackUtils {
         return TokenUtils.isTokenMathFunction(op1) && TokenUtils.isTokenMathFunction(op2);
     }
 
+    public static boolean isLastTwoNumOnStack(Stack<String> stack) {
+        if (stack.size() < 2) {
+            return false;
+        }
+        String op1 = stack.pop();
+        String op2 = stack.pop();
+        stack.push(op2);
+        stack.push(op1);
+
+        return TokenUtils.isTokenNumerical(op1) && TokenUtils.isTokenNumerical(op2);
+    }
+
     public static boolean isBeforeLastOnStackIsFunction(Stack<String> stack) {
         if (stack.size() < 2) {
             return false;
@@ -125,6 +136,67 @@ public class StackUtils {
         stack.push(op1);
 
         return TokenUtils.isTokenMathFunction(op2);
+    }
+
+    public static String getBeforeLastFunctionOnStack(Stack<String> stack) {
+        if (stack.size() < 2) {
+            return null;
+        }
+
+        String op1 = stack.pop();
+        String op2 = stack.pop();
+        stack.push(op2);
+        stack.push(op1);
+
+        return op2;
+    }
+
+    public static boolean doCalculateFuncOnStack(Stack<String> stack, MathFunction mf, StringTokenizer st) {
+        Double calcVal;
+        String numVal = null;
+        //pop the val
+        if (TokenUtils.isTokenNumerical(stack.peek())) {
+            numVal = stack.pop();
+        }
+        //pop the func
+        if(TokenUtils.isTokenMathFunction(stack.peek())) {
+            stack.pop();
+        }
+
+        if (mf instanceof SingleArgMathFunction samf) {
+            double val = Double.parseDouble(numVal);
+            calcVal = samf.calculate(val);
+            stack.push(calcVal.toString());
+        }else if (mf instanceof DoubleArgMathFunction damf) {
+            double val = Double.parseDouble(numVal);
+            st.nextToken(); //ignore whitespace
+            double nextVal = Double.parseDouble(TokenUtils.filterToken(st.nextToken()));
+            calcVal = damf.calculate(val, nextVal);
+            stack.push(calcVal.toString());
+        }else if (mf instanceof MultiArgMathFunction mamf) {
+            int count = mamf.getArgCount();
+            Double[] vals = new Double[count];
+            for (int i = 0; i < count; i++) {
+                st.nextToken();  //ignore whitespace
+                vals[i] = Double.parseDouble(TokenUtils.filterToken(st.nextToken()));
+            }
+            calcVal = mamf.calculate(vals);
+            stack.push(calcVal.toString());
+        }else {
+            System.err.println("NOT IMPLEMENTED FUNC TYPE!");
+            return false;
+        }
+        return true;
+    }
+
+    public static boolean doCalculateArithmeticOnStack(Stack<String> stack, String arithmeticOperator) {
+        if (StackUtils.isLastTwoNumOnStack(stack)) {
+            Double result = StackUtils.doArithmeticOperationOnStack(stack, arithmeticOperator);
+            stack.push(result.toString());
+            //opStack.pop();
+            return true;
+        }
+        return false;
     }
 
     public static class FuncHelper {

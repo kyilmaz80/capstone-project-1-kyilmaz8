@@ -7,8 +7,10 @@ import tr.com.kyilmaz80.myparser.utils.StackUtils;
 import tr.com.kyilmaz80.myparser.utils.StringUtils;
 import tr.com.kyilmaz80.myparser.utils.TokenUtils;
 
+import javax.swing.*;
 import java.util.Stack;
 import java.util.StringTokenizer;
+import java.util.TooManyListenersException;
 
 public class CommandParser {
     public static FunctionCalculator fc = FunctionCalculatorFactory.getInstance();
@@ -20,6 +22,7 @@ public class CommandParser {
     public static Double eval(String postfixExpression) {
         Double result;
         Stack<String> stack = new Stack<>();
+        Stack<String> opStack = new Stack<>();
         String tokenString;
         if (postfixExpression == null) {
             System.err.println("Beklenmeyen postfix ifadesi null!");
@@ -45,14 +48,22 @@ public class CommandParser {
                 if (stack.isEmpty() || TokenUtils.isTokenNumerical(stack.peek())) {
                     stack.push(tokenString);
                 }else {
-                    // arg parent may be single, double or multi arg func
+                    // stack is not empty and stack peek is not numerical case
+                    // tokenString parent may be single, double or multi arg func
                     MathFunction mf = fc.getFunction(stack.peek());
                     if (mf == null) {
                         System.err.println("not a func mf null");
                         continue;
                     }
-                    //pop the func
-                    stack.pop();
+
+                    if (TokenUtils.isTokenNumerical(tokenString)) {
+                        stack.push(tokenString);
+                    }
+
+                    if (!StackUtils.doCalculateFuncOnStack(stack, mf, st)) {
+                        throw new RuntimeException("Func operation problem on stack!");
+                    }
+                    /*
                     Double calcVal;
                     if (mf instanceof SingleArgMathFunction samf) {
                         double val = Double.parseDouble(tokenString);
@@ -60,6 +71,7 @@ public class CommandParser {
                         stack.push(calcVal.toString());
                     }else if (mf instanceof DoubleArgMathFunction damf) {
                         double val = Double.parseDouble(tokenString);
+                        st.nextToken(); //ignore whitespace
                         double nextVal = Double.parseDouble(TokenUtils.filterToken(st.nextToken()));
                         calcVal = damf.calculate(val, nextVal);
                         stack.push(calcVal.toString());
@@ -67,6 +79,7 @@ public class CommandParser {
                         int count = mamf.getArgCount();
                         Double[] vals = new Double[count];
                         for (int i = 0; i < count; i++) {
+                            st.nextToken();  //ignore whitespace
                             vals[i] = Double.parseDouble(TokenUtils.filterToken(st.nextToken()));
                         }
                         calcVal = mamf.calculate(vals);
@@ -75,6 +88,8 @@ public class CommandParser {
                         System.err.println("NOT IMPLEMENTED FUNC TYPE!");
                     }
 
+                     */
+
                 }
             } else if(TokenUtils.isTokenMathFunction(tokenString)) {
                 stack.push(tokenString);
@@ -82,10 +97,46 @@ public class CommandParser {
                 //pop the top two operands
                 //if the two operands are numerical
                 // do arithmetical operation
-                result = StackUtils.doArithmeticOperationOnStack(stack, tokenString);
-                stack.push(result.toString());
+                opStack.push(tokenString);
+                if (StackUtils.isLastTwoNumOnStack(stack)) {
+                    /*
+                    result = StackUtils.doArithmeticOperationOnStack(stack, tokenString);
+                    stack.push(result.toString());
+                    opStack.pop();
+                     */
+                    if (!StackUtils.doCalculateArithmeticOnStack(stack, tokenString)){
+                        throw new RuntimeException("Arithmetic operation problem on stack!");
+                    }
+                    opStack.pop();
+                } else {
+                    // before peek is a function
+                    String funcName = StackUtils.getBeforeLastFunctionOnStack(stack);
+                    MathFunction mf = fc.getFunction(funcName);
+
+                    if (StackUtils.isBeforeLastOnStackIsFunction(stack)) {
+                        System.out.println("before a func!");
+                        if (!StackUtils.doCalculateFuncOnStack(stack, mf, st)) {
+                            throw new RuntimeException("Func operation problem on stack!");
+                        }
+                    }
+                    //remaining arithmetic
+                    if (opStack.size() != 0) {
+                        if (StackUtils.isLastTwoNumOnStack(stack)) {
+                            /*
+                            result = StackUtils.doArithmeticOperationOnStack(stack, opStack.pop());
+                            stack.push(result.toString());
+                            //opStack.pop();
+                             */
+                            if (!StackUtils.doCalculateArithmeticOnStack(stack, opStack.pop())){
+                                throw new RuntimeException("Arithmetic operation problem on stack!");
+                            }
+                        }
+                    }
+                }
+
             }
         }
+       // System.out.println(stack.size());
         return Double.parseDouble(stack.pop());
     }
 
