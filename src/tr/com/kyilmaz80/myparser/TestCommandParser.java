@@ -207,11 +207,11 @@ public class TestCommandParser {
 
     public static void test11() {
         //mismatch paranthesis
-        System.err.println("**********TEST11******************");
+        System.out.println("**********TEST11******************");
         String expression = "5*cos(0";
-        System.err.println(expression + ") eksik ) ! Beklenen durum");
+        System.out.println(expression + ") eksik ) ! Beklenen durum");
         String postfixExp = CommandParser.parse(expression);
-        System.err.println(postfixExp);
+        System.out.println(postfixExp);
     }
 
     public static void test12() {
