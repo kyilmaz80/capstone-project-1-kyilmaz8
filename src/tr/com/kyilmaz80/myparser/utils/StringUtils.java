@@ -25,6 +25,7 @@ public class StringUtils {
                 continue;
             }
             foundIndex = i;
+            break;
         }
         String funcNameToFind = arr[foundIndex];
         String newFuncName = funcNameToFind + argCount;

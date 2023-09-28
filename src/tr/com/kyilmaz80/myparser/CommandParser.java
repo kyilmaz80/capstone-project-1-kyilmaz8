@@ -144,7 +144,7 @@ public class CommandParser {
                 // token is operator
                 Operators tokenOperator = Operators.fromSymbol(tokenString);
                 if (tokenOperator == Operators.LEFT_PARENTHESES) {
-                    leftParanthesisFound = true;
+                    leftParanthesisFound = funcFound == true;
                 }
                 if (stack.isEmpty()) {
                     stack.push(tokenString);

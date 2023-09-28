@@ -265,8 +265,8 @@ public class TestCommandParser {
         String expression = "cos(0)+max(3,7)+5";
         String postfixExpected = "cos 0 max2 3 7 + 5 +";
         String postfixResult = CommandParser.parse(expression);
-        assert postfixResult.equals(postfixExpected);
         System.out.println(postfixResult);
+        assert postfixResult.equals(postfixExpected);
         Double res = CommandParser.eval(postfixResult);
         System.out.println(res);
         assert res == 13.0;

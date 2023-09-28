@@ -1,12 +1,16 @@
 package tr.com.kyilmaz80.myparser.utils;
 
-import tr.com.kyilmaz80.myparser.func.*;
+import tr.com.kyilmaz80.myparser.func.DoubleArgMathFunction;
+import tr.com.kyilmaz80.myparser.func.MathFunction;
+import tr.com.kyilmaz80.myparser.func.MultiArgMathFunction;
+import tr.com.kyilmaz80.myparser.func.SingleArgMathFunction;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Stack;
 import java.util.StringTokenizer;
 
 public class StackUtils {
-    //static FunctionCalculator fc = FunctionCalculatorFactory.getInstance();
     public static double doOperation(double val1, double val2, Operators op) {
         double result = -1;
         switch (op) {
@@ -89,10 +93,6 @@ public class StackUtils {
             stack.pop();
         }
 
-        if (numVal == null) {
-            throw new RuntimeException("numVal null unexpected in doCalculateFuncOnStack");
-        }
-
         if (mf instanceof SingleArgMathFunction samf) {
             double val = Double.parseDouble(numVal);
             calcVal = samf.calculate(val);
@@ -105,16 +105,11 @@ public class StackUtils {
             stack.push(calcVal.toString());
         }else if (mf instanceof MultiArgMathFunction mamf) {
             int count = mamf.getArgCount();
-            String val = st.nextToken();
             Double[] vals = new Double[count];
             vals[0] = Double.parseDouble(numVal);
             for (int i = 1; i < count; i++) {
                 st.nextToken();  //ignore whitespace
-                if (TokenUtils.isTokenMathFunction(val)) {
-                    FunctionCalculator fc = FunctionCalculatorFactory.getInstance();
-                    MathFunction mf2 = fc.getFunction(val);
-                }
-                vals[i] = Double.parseDouble(TokenUtils.filterToken(val));
+                vals[i] = Double.parseDouble(TokenUtils.filterToken(st.nextToken()));
             }
             calcVal = mamf.calculate(vals);
             stack.push(calcVal.toString());
