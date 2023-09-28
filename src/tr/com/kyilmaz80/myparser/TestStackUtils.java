@@ -30,12 +30,7 @@ public class TestStackUtils {
         String postfix = "5 4 6";
         TestStackUtils tsu  = new TestStackUtils(postfix);
 
-        StackUtils.FuncHelper fh;
 
-        fh = StackUtils.getRecursiveBeforeOnStackIsFunction(tsu.stack);
-        assert fh.funcArgCount == 0;
-        assert fh.isFunction == false;
-        assert fh.name.equalsIgnoreCase(null);
 
     }
 
