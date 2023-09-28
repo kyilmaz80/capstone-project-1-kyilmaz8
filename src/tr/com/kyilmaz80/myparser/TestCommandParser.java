@@ -1,5 +1,7 @@
 package tr.com.kyilmaz80.myparser;
 
+import tr.com.kyilmaz80.myparser.utils.Constants;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
@@ -7,46 +9,48 @@ public class TestCommandParser {
     public static void main(String[] args) {
         //-enableassertions ile derlenmeli.
         String testName;
+        boolean allTests = false;
 
         if (args.length == 0) {
             System.out.println("Running all tests");
             testName = "test";
+            allTests = true;
         } else {
             System.out.println("Running test " + args[0]);
             testName = args[0];
         }
 
         Method[] methods = TestCommandParser.class.getDeclaredMethods();
+        String[] selectedTests = testName.split("[,;]");
+        if (selectedTests.length == 1) {
+            run(allTests, testName, methods);
+        }else {
+            for(String selectedTest: selectedTests) {
+                run(allTests, selectedTest, methods );
+            }
+        }
+
+
+
+
+    }
+
+    public static void run(boolean allTests, String testName, Method[] methods) {
         for(Method method: methods) {
-            if (method.getName().contains(testName)) {
+            if (allTests || method.getName().equalsIgnoreCase(testName)) {
+                if (!method.getName().contains("test")) {
+                    continue;
+                }
                 try {
                     method.invoke(null);
                 } catch (IllegalAccessException e) {
                     throw new RuntimeException(e);
                 } catch (InvocationTargetException e) {
-                    throw new RuntimeException(e);
+                    e.printStackTrace();
+                    throw new RuntimeException(method.getName() + " failed");
                 }
             }
         }
-
-
-//        test1();
-//        test2();
-        test3();
-//        test4();
-//        test5();
-//        test6();
-//        test7();
-//        test8();
-//        test9();
-//        test10();
-//        //test11();
-//        test12();
-//        test13();
-//        test14();
-//        test15();
-//        test16();
-//        test17();
     }
 
     public static void test1() {
