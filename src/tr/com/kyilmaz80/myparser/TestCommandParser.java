@@ -1,24 +1,52 @@
 package tr.com.kyilmaz80.myparser;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+
 public class TestCommandParser {
     public static void main(String[] args) {
         //-enableassertions ile derlenmeli.
-        test1();
-        test2();
+        String testName;
+
+        if (args.length == 0) {
+            System.out.println("Running all tests");
+            testName = "test";
+        } else {
+            System.out.println("Running test " + args[0]);
+            testName = args[0];
+        }
+
+        Method[] methods = TestCommandParser.class.getDeclaredMethods();
+        for(Method method: methods) {
+            if (method.getName().contains(testName)) {
+                try {
+                    method.invoke(null);
+                } catch (IllegalAccessException e) {
+                    throw new RuntimeException(e);
+                } catch (InvocationTargetException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+
+
+//        test1();
+//        test2();
         test3();
-        test4();
-        test5();
-        test6();
-        test7();
-        test8();
-        test9();
-        test10();
-        //test11();
-        test12();
+//        test4();
+//        test5();
+//        test6();
+//        test7();
+//        test8();
+//        test9();
+//        test10();
+//        //test11();
+//        test12();
 //        test13();
-        test14();
-        test15();
-        test16();
+//        test14();
+//        test15();
+//        test16();
+//        test17();
     }
 
     public static void test1() {
@@ -240,5 +268,17 @@ public class TestCommandParser {
 
     }
 
+    public static void test17() {
+        System.out.println("**********TEST17******************");
+        String expression = "1+max(4,5,1)+3";
+        String postfixExpected = "1 max3 4 5 1 + 3 +";
+        String postfixResult = CommandParser.parse(expression);
+        System.out.println(postfixResult);
+        //assert postfixResult.equals(postfixExpected);
+        Double res = CommandParser.eval(postfixResult);
+        System.out.println(res);
+        assert res == 9.0;
+
+    }
 
 }
