@@ -1,14 +1,12 @@
 package tr.com.kyilmaz80.myparser.utils;
 
-import tr.com.kyilmaz80.myparser.func.DoubleArgMathFunction;
-import tr.com.kyilmaz80.myparser.func.MathFunction;
-import tr.com.kyilmaz80.myparser.func.MultiArgMathFunction;
-import tr.com.kyilmaz80.myparser.func.SingleArgMathFunction;
+import tr.com.kyilmaz80.myparser.func.*;
 
 import java.util.Stack;
 import java.util.StringTokenizer;
 
 public class StackUtils {
+    //static FunctionCalculator fc = FunctionCalculatorFactory.getInstance();
     public static double doOperation(double val1, double val2, Operators op) {
         double result = -1;
         switch (op) {
@@ -107,11 +105,16 @@ public class StackUtils {
             stack.push(calcVal.toString());
         }else if (mf instanceof MultiArgMathFunction mamf) {
             int count = mamf.getArgCount();
+            String val = st.nextToken();
             Double[] vals = new Double[count];
             vals[0] = Double.parseDouble(numVal);
             for (int i = 1; i < count; i++) {
                 st.nextToken();  //ignore whitespace
-                vals[i] = Double.parseDouble(TokenUtils.filterToken(st.nextToken()));
+                if (TokenUtils.isTokenMathFunction(val)) {
+                    FunctionCalculator fc = FunctionCalculatorFactory.getInstance();
+                    MathFunction mf2 = fc.getFunction(val);
+                }
+                vals[i] = Double.parseDouble(TokenUtils.filterToken(val));
             }
             calcVal = mamf.calculate(vals);
             stack.push(calcVal.toString());

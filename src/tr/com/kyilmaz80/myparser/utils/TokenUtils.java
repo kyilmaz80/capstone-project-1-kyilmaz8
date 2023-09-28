@@ -32,6 +32,18 @@ public class TokenUtils {
         return Arrays.binarySearch(FunctionConstants.ALLOWED_MATH_FUNCTIONS, functionName) >= 0;
     }
 
+    public static boolean isMathFunctionVariadic(String str) {
+        if (str == null || str.length() <= 1) {
+            return false;
+        }
+        String[] funcArray = str.split("\\(");
+        //multiarg with variable count functions also func
+        //max3 -> max
+        String functionName = StringUtils.removeNumbers(funcArray[0]).toLowerCase();
+        Arrays.sort(FunctionConstants.VARIADIC_MATH_FUNCTIONS);
+        return Arrays.binarySearch(FunctionConstants.VARIADIC_MATH_FUNCTIONS, functionName) >= 0;
+    }
+
     public static boolean isTokenValid(String token) {
         return isTokenExit(token) || isTokenNumerical(token) || isTokenMathFunction(token) || isTokenDelimiter(token);
     }

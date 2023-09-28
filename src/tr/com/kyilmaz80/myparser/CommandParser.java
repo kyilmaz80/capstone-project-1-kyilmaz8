@@ -133,7 +133,8 @@ public class CommandParser {
                 return null;
             }
             if (TokenUtils.isTokenOperand(tokenString)) {
-                if (TokenUtils.isTokenMathFunction(tokenString)) {
+                //if (TokenUtils.isTokenMathFunction(tokenString) && TokenUtils.isMathFunctionVariadic(tokenString)) {
+                if (TokenUtils.isTokenMathFunction(tokenString) && TokenUtils.isMathFunctionVariadic(tokenString)) {
                     funcFound = true;
                     funcCommaCount = 0;
                     funcName = tokenString;
@@ -156,7 +157,6 @@ public class CommandParser {
 
                     String opOnStack = stack.peek();
                     Operators opOnStackOperator = Operators.fromSymbol(opOnStack);
-
 
                     if (tokenOperator == Operators.LEFT_PARENTHESES) {
                         if (!TokenUtils.isTokenMathFunction(opOnStack)) {

@@ -220,8 +220,8 @@ public class TestCommandParser {
         assert postfixResult.equals(postfixExpected);
         System.out.println(postfixResult);
         Double res = CommandParser.eval(postfixResult);
-        assert res == 7.0;
         System.out.println(res);
+        assert res == 7.0;
     }
 
     public static void test13() {
@@ -284,6 +284,27 @@ public class TestCommandParser {
         System.out.println(res);
         assert res == 9.0;
 
+    }
+    public static void test18() {
+        String expression = "1+cos(max(4,5,1))+3";
+        String postfixExpected = "1 cos max3 4 5 1 + 3 +";
+        String postfixResult = CommandParser.parse(expression);
+        System.out.println(postfixResult);
+        assert postfixResult.equals(postfixExpected);
+        Double res = CommandParser.eval(postfixResult);
+        System.out.println(res);
+        assert res == 4.28366218546322625;
+    }
+
+    public static void test19() {
+        String expression = "1+max(4,5,cos(0))+3";
+        String postfixExpected = "1 max3 4 5 cos 0 + 3 +";
+        String postfixResult = CommandParser.parse(expression);
+        System.out.println("postfix result: " + postfixResult);
+        assert postfixResult.equals(postfixExpected);
+        Double res = CommandParser.eval(postfixResult);
+        System.out.println(res);
+        assert res == 9.0;
     }
 
 }
