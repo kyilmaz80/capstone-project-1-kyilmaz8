@@ -1,6 +1,8 @@
 package tr.com.kyilmaz80.myparser.utils;
 
 import java.util.Arrays;
+import java.util.StringTokenizer;
+
 import tr.com.kyilmaz80.myparser.func.FunctionConstants;
 public class TokenUtils {
 
@@ -30,6 +32,11 @@ public class TokenUtils {
         String functionName = StringUtils.removeNumbers(funcArray[0]).toLowerCase();
         Arrays.sort(FunctionConstants.ALLOWED_MATH_FUNCTIONS);
         return Arrays.binarySearch(FunctionConstants.ALLOWED_MATH_FUNCTIONS, functionName) >= 0;
+    }
+
+    public static String getFilterNextToken(StringTokenizer st) {
+        st.nextToken(); //whitespace
+        return filterToken(st.nextToken());
     }
 
     public static boolean isMathFunctionVariadic(String str) {

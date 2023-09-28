@@ -84,6 +84,8 @@ public class StackUtils {
     public static boolean doCalculateFuncOnStack(Stack<String> stack, MathFunction mf, StringTokenizer st) {
         Double calcVal;
         String numVal = null;
+
+
         //pop the val
         if (TokenUtils.isTokenNumerical(stack.peek())) {
             numVal = stack.pop();
@@ -93,33 +95,38 @@ public class StackUtils {
             stack.pop();
         }
 
+        calcVal = getCalculateFuncOnStack(mf, st, numVal);
+
+        stack.push(calcVal.toString());
+
+        return true;
+    }
+
+    public static Double getCalculateFuncOnStack(MathFunction mf, StringTokenizer st, String numVal)  {
+        Double calcVal;
         if (mf instanceof SingleArgMathFunction samf) {
             double val = Double.parseDouble(numVal);
             calcVal = samf.calculate(val);
-            stack.push(calcVal.toString());
         }else if (mf instanceof DoubleArgMathFunction damf && damf.getArgCount() == 2) {
             double val = Double.parseDouble(numVal);
-            st.nextToken(); //ignore whitespace
-            double nextVal = Double.parseDouble(TokenUtils.filterToken(st.nextToken()));
+            String nextToken = TokenUtils.getFilterNextToken(st);
+            double nextVal = Double.parseDouble(nextToken);
             calcVal = damf.calculate(val, nextVal);
-            stack.push(calcVal.toString());
         }else if (mf instanceof MultiArgMathFunction mamf) {
             int count = mamf.getArgCount();
             Double[] vals = new Double[count];
             vals[0] = Double.parseDouble(numVal);
             for (int i = 1; i < count; i++) {
-                st.nextToken();  //ignore whitespace
-                vals[i] = Double.parseDouble(TokenUtils.filterToken(st.nextToken()));
+                String nextToken = TokenUtils.getFilterNextToken(st);
+                vals[i] = Double.parseDouble(nextToken);
             }
             calcVal = mamf.calculate(vals);
-            stack.push(calcVal.toString());
         }else {
             System.err.println("NOT IMPLEMENTED FUNC TYPE!");
-            return false;
+            return null;
         }
-        return true;
+        return calcVal;
     }
-
     public static boolean doCalculateArithmeticOnStack(Stack<String> stack, String arithmeticOperator) {
         if (StackUtils.isLastTwoNumOnStack(stack)) {
             Double result = StackUtils.doArithmeticOperationOnStack(stack, arithmeticOperator);
