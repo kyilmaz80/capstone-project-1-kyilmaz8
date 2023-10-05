@@ -106,6 +106,7 @@ public class CommandParser {
         StringTokenizer st = new StringTokenizer(infixExpression, Constants.DELIMITERS, true);
         Stack<String> stack = new Stack<>();
         String funcName = "";
+        String funcName2 = "";
         boolean leftParanthesisFound = false;
         boolean funcFound = false;
         int funcCommaCount = 0;
@@ -138,6 +139,8 @@ public class CommandParser {
                     funcFound = true;
                     funcCommaCount = 0;
                     funcName = tokenString;
+                } else if(TokenUtils.isTokenMathFunction(tokenString)) {
+                    funcName2 = tokenString;
                 }
                 sb.append(tokenString.concat(Constants.WHITESPACE));
             } else {
@@ -211,6 +214,14 @@ public class CommandParser {
                         continue;
                     } else if (tokenOperator == Operators.FUNC_VARIABLE_COMMA) {
                         //System.out.println("Comma var");
+                        if (!funcName2.isEmpty()) {
+                            MathFunction mathFunction = fc.getFunction(funcName2);
+                            if (mathFunction instanceof DoubleArgMathFunction) {
+                                funcCommaCount--;
+                            } else if (mathFunction instanceof  MultiArgMathFunction) {
+                                throw new RuntimeException("MULTIARG IN MULTIARG POSTFIX NOT IMPLEMENTED!");
+                            }
+                        }
                         funcCommaCount++;
                         continue;
                     }

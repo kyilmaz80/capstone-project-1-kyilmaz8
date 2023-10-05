@@ -307,4 +307,15 @@ public class TestCommandParser {
         assert res == 9.0;
     }
 
+    public static void test20() {
+        String expression = "1+max(4,5,pow(5,2))+3";
+        String postfixExpected = "1 max3 4 5 pow 5 2 + 3 +";
+        String postfixResult = CommandParser.parse(expression);
+        System.out.println("postfix result: " + postfixResult);
+        assert postfixResult.equals(postfixExpected);
+        Double res = CommandParser.eval(postfixResult);
+        System.out.println(res);
+        assert res == 29.0;
+    }
+
 }
