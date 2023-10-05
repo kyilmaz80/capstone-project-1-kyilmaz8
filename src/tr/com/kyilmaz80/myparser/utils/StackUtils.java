@@ -91,7 +91,9 @@ public class StackUtils {
         }
 
         calcVal = getCalculateFuncOnStack(mf, st, numVal);
-
+        if (calcVal == null) {
+            return false;
+        }
         stack.push(calcVal.toString());
 
         return true;
