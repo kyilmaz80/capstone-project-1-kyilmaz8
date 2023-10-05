@@ -1,16 +1,12 @@
 package tr.com.kyilmaz80.myparser.utils;
+import tr.com.kyilmaz80.myparser.func.*;
 
-import tr.com.kyilmaz80.myparser.func.DoubleArgMathFunction;
-import tr.com.kyilmaz80.myparser.func.MathFunction;
-import tr.com.kyilmaz80.myparser.func.MultiArgMathFunction;
-import tr.com.kyilmaz80.myparser.func.SingleArgMathFunction;
-
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Stack;
 import java.util.StringTokenizer;
 
 public class StackUtils {
+    public static FunctionCalculator fc = FunctionCalculatorFactory.getInstance();
+
     public static double doOperation(double val1, double val2, Operators op) {
         double result = -1;
         switch (op) {
@@ -85,7 +81,6 @@ public class StackUtils {
         Double calcVal;
         String numVal = null;
 
-
         //pop the val
         if (TokenUtils.isTokenNumerical(stack.peek())) {
             numVal = stack.pop();
@@ -118,7 +113,12 @@ public class StackUtils {
             vals[0] = Double.parseDouble(numVal);
             for (int i = 1; i < count; i++) {
                 String nextToken = TokenUtils.getFilterNextToken(st);
-                vals[i] = Double.parseDouble(nextToken);
+                if (TokenUtils.isTokenNumerical(nextToken)) {
+                    vals[i] = Double.parseDouble(nextToken);
+                }else {
+                    MathFunction mf2 = fc.getFunction(nextToken);
+                    vals[i] = getCalculateFuncOnStack(mf2, st, TokenUtils.getFilterNextToken(st));
+                }
             }
             calcVal = mamf.calculate(vals);
         }else {
