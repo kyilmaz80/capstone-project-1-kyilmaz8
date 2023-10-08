@@ -58,8 +58,19 @@ public class CommandParser {
                         stack.push(tokenString);
                     }
 
-                    if (!StackUtils.doCalculateFuncOnStack(stack, mf, st)) {
-                        throw new RuntimeException("Func operation problem on stack!");
+                    //recursive case
+                    while(StackUtils.isBeforeLastOnStackIsFunction(stack)) {
+
+                        String funcName = StackUtils.getBeforeLastFunctionOnStack(stack);
+                        mf = fc.getFunction(funcName);
+                        if (!StackUtils.doCalculateFuncOnStack(stack, mf, st)) {
+                            throw new RuntimeException("Func operation problem on stack!");
+                        }
+                        System.out.println("before a func!");
+                        // if there is an operation on nested func value, break!
+                        if (st.hasMoreElements()) {
+                            break;
+                        }
                     }
                 }
             } else if(TokenUtils.isTokenMathFunction(tokenString)) {
@@ -77,9 +88,11 @@ public class CommandParser {
                 } else {
                     // before peek is a function
                     String funcName = StackUtils.getBeforeLastFunctionOnStack(stack);
-                    MathFunction mf = fc.getFunction(funcName);
+                    MathFunction mf;
 
-                    if (StackUtils.isBeforeLastOnStackIsFunction(stack)) {
+                    //recursive case
+                    while(StackUtils.isBeforeLastOnStackIsFunction(stack)){
+                        mf = fc.getFunction(funcName);
                         System.out.println("before a func!");
                         if (!StackUtils.doCalculateFuncOnStack(stack, mf, st)) {
                             throw new RuntimeException("Func operation problem on stack!");

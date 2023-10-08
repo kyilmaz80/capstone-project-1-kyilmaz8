@@ -40,7 +40,9 @@ public class TestCommandParser {
                     continue;
                 }
                 try {
+                    System.out.println("**********" + method.getName().toUpperCase() + "******************") ;
                     method.invoke(null);
+                    System.out.println();
                 } catch (IllegalAccessException e) {
                     throw new RuntimeException(e);
                 } catch (InvocationTargetException e) {
@@ -52,7 +54,6 @@ public class TestCommandParser {
     }
 
     public static void test1() {
-        System.out.println("**********TEST1******************");
         assert CommandParser.parse("5 + 6 * 7").equals("5 6 7 * +");
         assert CommandParser.parse("5*6+7").equals("5 6 * 7 +");
         assert CommandParser.parse("5/4 *3 +2").equals("5 4 / 3 * 2 +");
@@ -60,7 +61,6 @@ public class TestCommandParser {
     }
 
     public static void test2() {
-        System.out.println("**********TEST2******************");
         assert CommandParser.eval(CommandParser.parse("5+6*7")) == 47.0;
         assert CommandParser.eval(CommandParser.parse("5*6+7")) == 37.0;
         assert CommandParser.eval(CommandParser.parse("5/4*3+2")) == 5.75;
@@ -68,7 +68,6 @@ public class TestCommandParser {
     }
 
     public static void test3() {
-        System.out.println("**********TEST3******************");
         //assert CommandParser.eval(CommandParser.parse("5*4+cos(0)")) == 21.0;
         //assert CommandParser.eval(CommandParser.parse("5*4+cos(0)*5")) == 25.0;
 
@@ -85,7 +84,6 @@ public class TestCommandParser {
     }
 
     public static void test4() {
-        System.out.println("**********TEST4******************");
         String exp = CommandParser.parse("5*4+sqrt(pow(5,2))");
         System.out.println(exp);
         assert CommandParser.parse("5*4+sqrt(pow(5,2))").equals("5 4 * sqrt pow 5 2 +");
@@ -97,7 +95,6 @@ public class TestCommandParser {
     }
 
     public static void test5() {
-        System.out.println("**********TEST5******************");
         assert CommandParser.eval(CommandParser.parse("5*4*cos(0)*5")) == 100.0;
         assert CommandParser.eval(CommandParser.parse("5*(4+1)+5")) == 30.0;
 
@@ -119,7 +116,6 @@ public class TestCommandParser {
     }
 
     public static void test6() {
-        System.out.println("**********TEST6******************");
         assert CommandParser.eval(CommandParser.parse("5*(4+5)")) == 45.0;
         assert CommandParser.eval(CommandParser.parse("5*(4+sqrt(25))")) == 45.0;
         assert CommandParser.eval(CommandParser.parse("5*(4+sqrt(25)*cos(0))")) == 45.0;
@@ -143,7 +139,6 @@ public class TestCommandParser {
     }
 
     public static void test7() {
-        System.out.println("**********TEST7******************");
         //String postfixExpression = CommandParser.parse("5*(4+sqrt(pow(5,2)))");
         //assert CommandParser.eval(postfixExpression) == 45.0;
         //5 4 sqrt pow 5 2 + *
@@ -161,19 +156,16 @@ public class TestCommandParser {
     }
 
     public static void test8() {
-        System.out.println("**********TEST8******************");
         //Postfix operator eklerken operator ayni geldi case
         assert CommandParser.eval(CommandParser.parse("4+6/2*3-1")) == 12.0;
     }
 
     public static void test9() {
-        System.out.println("**********TEST9******************");
         assert CommandParser.eval(CommandParser.parse("cos(0)")) == 1.0;
         assert CommandParser.parse("cos(0)").equals("cos 0");
     }
 
     public static void test10() {
-        System.out.println("**********TEST10******************");
         // corner cases
 //        String expression = "cos(0";
 //        String postfix = CommandParser.parse(expression);
@@ -205,7 +197,6 @@ public class TestCommandParser {
 
     public static void test11() {
         //mismatch paranthesis
-        System.out.println("**********TEST11******************");
         String expression = "5*cos(0";
         System.out.println(expression + ") eksik ) ! Beklenen durum");
         String postfixExp = CommandParser.parse(expression);
@@ -213,7 +204,6 @@ public class TestCommandParser {
     }
 
     public static void test12() {
-        System.out.println("**********TEST12******************");
         String expression = "1+max(4,5,6)";
         String postfixExpected = "1 max3 4 5 6 +";
         String postfixResult = CommandParser.parse(expression);
@@ -225,7 +215,6 @@ public class TestCommandParser {
     }
 
     public static void test13() {
-        System.out.println("**********TEST13******************");
         String expression = "max(4,5,6)+2";
         String postfixExpected = "max3 4 5 6 2 +";
         String postfixResult = CommandParser.parse(expression);
@@ -237,7 +226,6 @@ public class TestCommandParser {
     }
 
     public static void test14() {
-        System.out.println("**********TEST14******************");
         String expression = "max(4,5,6)";
         String postfixExpected = "max3 4 5 6";
         String postfixResult = CommandParser.parse(expression);
@@ -249,7 +237,6 @@ public class TestCommandParser {
     }
 
     public static void test15() {
-        System.out.println("**********TEST15******************");
         String expression = "max(4,1,3,0)";
         String postfixExpected = "max4 4 1 3 0";
         String postfixResult = CommandParser.parse(expression);
@@ -261,7 +248,6 @@ public class TestCommandParser {
     }
 
     public static void test16() {
-        System.out.println("**********TEST16******************");
         String expression = "cos(0)+max(3,7)+5";
         String postfixExpected = "cos 0 max2 3 7 + 5 +";
         String postfixResult = CommandParser.parse(expression);
@@ -274,7 +260,6 @@ public class TestCommandParser {
     }
 
     public static void test17() {
-        System.out.println("**********TEST17******************");
         String expression = "1+max(4,5,1)+3";
         String postfixExpected = "1 max3 4 5 1 + 3 +";
         String postfixResult = CommandParser.parse(expression);
@@ -316,6 +301,50 @@ public class TestCommandParser {
         Double res = CommandParser.eval(postfixResult);
         System.out.println(res);
         assert res == 29.0;
+    }
+
+    public static void test21() {
+        String expression = "cos(cos(0))";
+        String postfixExpected = "cos cos 0";
+        String postfixResult = CommandParser.parse(expression);
+        System.out.println("postfix result: " + postfixResult);
+        assert postfixResult.equals(postfixExpected);
+        Double res = CommandParser.eval(postfixResult);
+        System.out.println(res);
+        assert res == 0.5403023058681398;
+    }
+
+    public static void test22() {
+        String expression = "1 + cos(cos(cos(0)))";
+        String postfixExpected = "1 cos cos cos 0 +";
+        String postfixResult = CommandParser.parse(expression);
+        System.out.println("postfix result: " + postfixResult);
+        assert postfixResult.equals(postfixExpected);
+        Double res = CommandParser.eval(postfixResult);
+        System.out.println(res);
+        assert res == 1.8575532158463934;
+    }
+
+    public static void test23() {
+        String expression = "cos(cos(cos(0)))";
+        String postfixExpected = "cos cos cos 0";
+        String postfixResult = CommandParser.parse(expression);
+        System.out.println("postfix result: " + postfixResult);
+        assert postfixResult.equals(postfixExpected);
+        Double res = CommandParser.eval(postfixResult);
+        System.out.println(res);
+        assert res == 0.8575532158463934;
+    }
+
+    public static void test24() {
+        String expression = "cos(cos(pow(5,2)))";
+        String postfixExpected = "cos cos pow 5 2";
+        String postfixResult = CommandParser.parse(expression);
+        System.out.println("postfix result: " + postfixResult);
+        assert postfixResult.equals(postfixExpected);
+        Double res = CommandParser.eval(postfixResult);
+        System.out.println(res);
+        assert res == 0.5476838819485967;
     }
 
 }

@@ -104,11 +104,20 @@ public class StackUtils {
         if (mf instanceof SingleArgMathFunction samf) {
             double val = Double.parseDouble(numVal);
             calcVal = samf.calculate(val);
+
         }else if (mf instanceof DoubleArgMathFunction damf && damf.getArgCount() == 2) {
             double val = Double.parseDouble(numVal);
             String nextToken = TokenUtils.getFilterNextToken(st);
             double nextVal = Double.parseDouble(nextToken);
             calcVal = damf.calculate(val, nextVal);
+            //TODO: recursive?
+            /*
+            if (TokenUtils.isTokenMathFunction(nextToken)) {
+                mf = fc.getFunction(nextToken);
+                calcVal = getCalculateFuncOnStack(mf, st, calcVal.toString());
+            }
+
+             */
         }else if (mf instanceof MultiArgMathFunction mamf) {
             int count = mamf.getArgCount();
             Double[] vals = new Double[count];
@@ -129,6 +138,7 @@ public class StackUtils {
         }
         return calcVal;
     }
+
     public static boolean doCalculateArithmeticOnStack(Stack<String> stack, String arithmeticOperator) {
         if (StackUtils.isLastTwoNumOnStack(stack)) {
             Double result = StackUtils.doArithmeticOperationOnStack(stack, arithmeticOperator);
