@@ -1,4 +1,5 @@
 package tr.com.kyilmaz80.myparser.utils;
+import tr.com.kyilmaz80.myparser.Bundle;
 import tr.com.kyilmaz80.myparser.func.*;
 
 import java.util.Stack;
@@ -14,18 +15,18 @@ public class StackUtils {
             case DIVISION -> result = val2 / val1;
             case ADDITION -> result = val2 + val1;
             case SUBTRACTION -> result = val2 - val1;
-            default -> System.out.println(op + " OP NOT IMPLEMENTED doOperation!");
+            default -> System.out.println(op + " " + Bundle.get().getString("su_err1"));
         }
         return result;
     }
 
     public static double doArithmeticOperationOnStack(Stack<String> stack, String tokenString) {
         if (stack.isEmpty()) {
-            throw new RuntimeException("Stack empty!");
+            throw new RuntimeException(Bundle.get().getString("su_err2"));
         }
 
         if (stack.size() < 2) {
-            throw new RuntimeException("Stack size too small for arithmetic operation!");
+            throw new RuntimeException(Bundle.get().getString("su_err3"));
         }
 
         double val1 = Double.parseDouble(stack.pop());
@@ -34,7 +35,7 @@ public class StackUtils {
 
         Operators operator = Operators.fromSymbol(tokenString);
         if (operator == null) {
-            throw new RuntimeException("Operator null unexpected!");
+            throw new RuntimeException(Bundle.get().getString("cp_err9"));
         }
         return StackUtils.doOperation(val1, val2, operator);
         //stack.push(String.valueOf(result));
@@ -110,14 +111,6 @@ public class StackUtils {
             String nextToken = TokenUtils.getFilterNextToken(st);
             double nextVal = Double.parseDouble(nextToken);
             calcVal = damf.calculate(val, nextVal);
-            //TODO: recursive?
-            /*
-            if (TokenUtils.isTokenMathFunction(nextToken)) {
-                mf = fc.getFunction(nextToken);
-                calcVal = getCalculateFuncOnStack(mf, st, calcVal.toString());
-            }
-
-             */
         }else if (mf instanceof MultiArgMathFunction mamf) {
             int count = mamf.getArgCount();
             Double[] vals = new Double[count];
@@ -133,7 +126,7 @@ public class StackUtils {
             }
             calcVal = mamf.calculate(vals);
         }else {
-            System.err.println("NOT IMPLEMENTED FUNC TYPE!");
+            System.err.println(Bundle.get().getString("su_err4"));
             return null;
         }
         return calcVal;
@@ -158,7 +151,7 @@ public class StackUtils {
         stack.push(op2);
         stack.push(op1);
 
-        return Operators.fromSymbol(op2) == Operators.LEFT_PARENTHESES;
+        return Operators.fromSymbol(op2) == Operators.LEFT_PARENTHESIS;
     }
 
 

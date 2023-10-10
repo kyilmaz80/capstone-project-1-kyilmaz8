@@ -196,7 +196,7 @@ public class TestCommandParser {
     }
 
     public static void test11() {
-        //mismatch paranthesis
+        //mismatch parenthesis
         String expression = "5*cos(0";
         System.out.println(expression + ") eksik ) ! Beklenen durum");
         String postfixExp = CommandParser.parse(expression);
@@ -371,4 +371,4 @@ public class TestCommandParser {
     }
 
 
-    }
+}

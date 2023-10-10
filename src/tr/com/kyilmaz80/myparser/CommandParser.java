@@ -23,7 +23,7 @@ public class CommandParser {
         Stack<String> opStack = new Stack<>();
         String tokenString;
         if (postfixExpression == null) {
-            System.err.println("Postfix expression null unexpected!");
+            System.err.println(Bundle.get().getString("cp_err1"));
             System.exit(1);
         }
         StringTokenizer st = new StringTokenizer(postfixExpression, Constants.DELIMITERS, true);
@@ -50,7 +50,7 @@ public class CommandParser {
                     // tokenString parent may be single, double or multi arg func
                     MathFunction mf = fc.getFunction(stack.peek());
                     if (mf == null) {
-                        System.err.println("not a func mf null");
+                        System.err.println(Bundle.get().getString("cp_err2"));
                         continue;
                     }
 
@@ -64,9 +64,9 @@ public class CommandParser {
                         String funcName = StackUtils.getBeforeLastFunctionOnStack(stack);
                         mf = fc.getFunction(funcName);
                         if (!StackUtils.doCalculateFuncOnStack(stack, mf, st)) {
-                            throw new RuntimeException("Func operation problem on stack!");
+                            throw new RuntimeException(Bundle.get().getString("cg_err3"));
                         }
-                        System.out.println("before a func!");
+                        //System.out.println("before a func!");
                         // if there is an operation on nested func value, break!
                         if (st.hasMoreElements()) {
                             break;
@@ -82,7 +82,7 @@ public class CommandParser {
                 opStack.push(tokenString);
                 if (StackUtils.isLastTwoNumOnStack(stack)) {
                     if (!StackUtils.doCalculateArithmeticOnStack(stack, tokenString)){
-                        throw new RuntimeException("Arithmetic operation problem on stack!");
+                        throw new RuntimeException(Bundle.get().getString("cp_err4"));
                     }
                     opStack.pop();
                 } else {
@@ -93,16 +93,16 @@ public class CommandParser {
                     //recursive case
                     while(StackUtils.isBeforeLastOnStackIsFunction(stack)){
                         mf = fc.getFunction(funcName);
-                        System.out.println("before a func!");
+                        //System.out.println("before a func!");
                         if (!StackUtils.doCalculateFuncOnStack(stack, mf, st)) {
-                            throw new RuntimeException("Func operation problem on stack!");
+                            throw new RuntimeException(Bundle.get().getString("cp_err3"));
                         }
                     }
                     //do the remaining arithmetic
                     if (!opStack.isEmpty()) {
                         if (StackUtils.isLastTwoNumOnStack(stack)) {
                             if (!StackUtils.doCalculateArithmeticOnStack(stack, opStack.pop())){
-                                throw new RuntimeException("Arithmetic operation problem on stack!");
+                                throw new RuntimeException(Bundle.get().getString("cp_err4"));
                             }
                         }
                     }
@@ -143,7 +143,7 @@ public class CommandParser {
         while (st.hasMoreElements()) {
             String tokenString = TokenUtils.filterToken(st.nextToken());
             if (!TokenUtils.isTokenValid(tokenString)) {
-                System.err.println(tokenString + " token unexpected !");
+                System.err.println(tokenString + " " + Bundle.get().getString("cp_err5"));
                 return null;
             }
             if (TokenUtils.isTokenOperand(tokenString)) {
@@ -159,7 +159,7 @@ public class CommandParser {
             } else {
                 // token is operator
                 Operators tokenOperator = Operators.fromSymbol(tokenString);
-                if (tokenOperator == Operators.LEFT_PARENTHESES) {
+                if (tokenOperator == Operators.LEFT_PARENTHESIS) {
                     leftParanthesisFound = funcFound == true;
                 }
                 if (stack.isEmpty()) {
@@ -174,40 +174,40 @@ public class CommandParser {
                     String opOnStack = stack.peek();
                     Operators opOnStackOperator = Operators.fromSymbol(opOnStack);
 
-                    if (tokenOperator == Operators.LEFT_PARENTHESES) {
+                    if (tokenOperator == Operators.LEFT_PARENTHESIS) {
                         if (!TokenUtils.isTokenMathFunction(opOnStack)) {
                             //LEFT PARENTHESES prior operation case
                             stack.push(tokenString);
                             continue;
                         }
-                    } else if (tokenOperator == Operators.RIGHT_PARENTHESES) {
+                    } else if (tokenOperator == Operators.RIGHT_PARENTHESIS) {
                         Operators topOperator = Operators.fromSymbol(stack.peek());
 
                         if (StackUtils.isBeforeLastOnStackIsLeftParentheses(stack) && !StackUtils.isBeforeLastOnStackIsFunction(stack)) {
                             //sb.append(stack.pop().concat(tr.com.kyilmaz80.myparser.utils.Constants.WHITESPACE));
-                            if (topOperator != Operators.LEFT_PARENTHESES) {
+                            if (topOperator != Operators.LEFT_PARENTHESIS) {
                                 StringUtils.doAppendOperatorToPostfixExpression(sb, stack.pop().concat(Constants.WHITESPACE));
                             }
                             stack.pop();
                             continue;
                         }
                         //while the operator at the top of the operator stack is not a left parenthesis:
-                        while (topOperator != Operators.LEFT_PARENTHESES) {
+                        while (topOperator != Operators.LEFT_PARENTHESIS) {
                             if (stack.isEmpty()) {
                                 //return null;
-                                System.err.println("Stack empty @RIGHT PARENTHESIS");
+                                System.err.println(Bundle.get().getString("cp_err6"));
                                 break;
                             }
                             //pop the operator from the operator stack into the output queue (sb)
                             StringUtils.doAppendOperatorToPostfixExpression(sb, stack.pop().concat(Constants.WHITESPACE));
                             if (stack.isEmpty()) {
-                                System.err.println("No left paranthesis left");
+                                System.err.println(Bundle.get().getString("cp_err7"));
                                 return null;
                             }
                             topOperator = Operators.fromSymbol(stack.peek());
                         }
                         //pop the left parenthesis from the operator stack and discard it
-                        if (topOperator == Operators.LEFT_PARENTHESES) {
+                        if (topOperator == Operators.LEFT_PARENTHESIS) {
                             stack.pop();
                         }
 
@@ -232,7 +232,7 @@ public class CommandParser {
                             if (mathFunction instanceof DoubleArgMathFunction) {
                                 funcCommaCount--;
                             } else if (mathFunction instanceof  MultiArgMathFunction) {
-                                throw new RuntimeException("MULTIARG IN MULTIARG POSTFIX NOT IMPLEMENTED!");
+                                throw new RuntimeException(Bundle.get().getString("cp_err8"));
                             }
                         }
                         funcCommaCount++;
@@ -240,7 +240,7 @@ public class CommandParser {
                     }
 
                     if (opOnStackOperator == null || tokenOperator == null) {
-                        throw new RuntimeException("operator null unexpected!");
+                        throw new RuntimeException(Bundle.get().getString("cp_err9"));
                     }
                     if (opOnStackOperator.isOperatorHighestPriorityFrom(tokenOperator) ||
                             opOnStackOperator.isOperatorSamePriorityTo(tokenOperator) ||
@@ -267,7 +267,7 @@ public class CommandParser {
         }
 
         if (StringUtils.isStringContainsParentheses(sb.toString())) {
-            System.err.println("Mismatched parentheses problem!");
+            System.err.println(Bundle.get().getString("cp_err10"));
             return null;
         }
         return sb.toString().trim();

@@ -1,8 +1,8 @@
 package tr.com.kyilmaz80.myparser.utils;
 
 public enum Operators {
-    LEFT_PARENTHESES("(", -1),
-    RIGHT_PARENTHESES(")", -1),
+    LEFT_PARENTHESIS("(", -1),
+    RIGHT_PARENTHESIS(")", -1),
     ADDITION("+",1),
     SUBTRACTION("-", 1),
     MULTIPLICATION("*", 2),

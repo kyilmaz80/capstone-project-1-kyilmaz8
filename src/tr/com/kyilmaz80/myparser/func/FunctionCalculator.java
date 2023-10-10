@@ -1,5 +1,6 @@
 package tr.com.kyilmaz80.myparser.func;
 
+import tr.com.kyilmaz80.myparser.Bundle;
 import tr.com.kyilmaz80.myparser.utils.StringUtils;
 import tr.com.kyilmaz80.myparser.utils.TokenUtils;
 
@@ -25,7 +26,7 @@ public class FunctionCalculator implements Calculator{
         }
 
         if(!isFunctionFound)
-            System.err.println("No such function found!");
+            System.err.println(Bundle.get().getString("fc_err1"));
 
         return result;
     }
@@ -42,7 +43,7 @@ public class FunctionCalculator implements Calculator{
         }
 
         if(!isFunctionFound)
-            System.out.println("No such function found!");
+            System.out.println(Bundle.get().getString("fc_err1"));
 
         return result;
     }
@@ -59,7 +60,7 @@ public class FunctionCalculator implements Calculator{
         }
 
         if(!isFunctionFound)
-            System.out.println("No such function found!");
+            System.out.println(Bundle.get().getString("fc_err1"));
 
         return result;
     }
@@ -110,7 +111,7 @@ public class FunctionCalculator implements Calculator{
                 clazz = Class.forName(className);
             }catch(ClassNotFoundException e) {
                 e.printStackTrace();
-                throw new RuntimeException(className + " class not implemented!");
+                throw new RuntimeException(className + " " + Bundle.get().getString("fc_err2"));
             }
 
             try{
@@ -120,7 +121,7 @@ public class FunctionCalculator implements Calculator{
                     MathFunction mf = (MathFunction) obj;
                     this.addFunction(mf);
                 } else {
-                    System.out.println(functionName + " is not a MathFunction.");
+                    System.out.println(functionName + " " + Bundle.get().getString("fc_err3"));
                 }
                 //calculator1.addFunction();
             }catch (InstantiationException | IllegalAccessException |
@@ -132,7 +133,7 @@ public class FunctionCalculator implements Calculator{
     }
     @Override
     public void listMathFunction() {
-        System.out.println("Available Functions:");
+        System.out.println(Bundle.get().getString("fc_print1"));
         for (MathFunction function : functions)
             System.out.println(function.getName());
     }

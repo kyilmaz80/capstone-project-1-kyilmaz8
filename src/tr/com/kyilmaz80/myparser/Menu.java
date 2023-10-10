@@ -4,24 +4,24 @@ import java.util.Scanner;
 
 public class Menu {
     public static void printHeader() {
-        System.out.println("***** Gelişmiş Hesap Makinesi *****");
-        System.out.println("Toplama: + | Çıkarma: - | Çarpma: * | Bölme: /");
-        System.out.println("Karekök: sqrt(x) | Üs alma: pow(x,y) | Sin: sin(x) | Cos: cos(x) | Tan: tan(x)");
-        System.out.println("Çıkmak için: exit");
+        System.out.println(Bundle.get().getString("menu_header1"));
+        System.out.println(Bundle.get().getString("menu_header2"));
+        System.out.println(Bundle.get().getString("menu_header3"));
+        System.out.println(Bundle.get().getString("menu_header4"));
     }
 
     public static String getInput() {
-        System.out.print("İşlemi girin: ");
+        System.out.print(Bundle.get().getString("menu_print1"));
         Scanner scanner = new Scanner(System.in);
         String prompt = scanner.nextLine();
         return StringUtils.removeSpaces(prompt.toLowerCase());
     }
 
     public static void exit() {
-        System.out.println("Hesap makinesi kapatılıyor. İyi günler!");
+        System.out.println(Bundle.get().getString("menu_print2"));
     }
 
     public static void printOutput() {
-        System.out.print("Sonuç:");
+        System.out.print(Bundle.get().getString("menu_print3"));
     }
 }

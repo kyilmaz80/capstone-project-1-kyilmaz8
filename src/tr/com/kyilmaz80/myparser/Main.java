@@ -1,9 +1,12 @@
 package tr.com.kyilmaz80.myparser;
 import tr.com.kyilmaz80.myparser.utils.Constants;
+
 public class Main {
     public static void main(String[] args) {
+
         Menu.printHeader();
         String command;
+
         do {
             command = Menu.getInput();
             if (command.equalsIgnoreCase(Constants.COMMAND_EXIT)) {
@@ -11,7 +14,8 @@ public class Main {
             }
             String parsedCommand = CommandParser.parse(command);
             if (parsedCommand == null) {
-                System.out.println("Komut parse edilemedi!");
+                String message =  Bundle.get().getString("main_err1");
+                System.out.println(message);
                 continue;
             }
             Menu.printOutput();
