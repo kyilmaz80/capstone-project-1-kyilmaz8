@@ -347,4 +347,28 @@ public class TestCommandParser {
         assert res == 0.5476838819485967;
     }
 
-}
+    public static void test25() {
+        String expression = "avg(4,6)";
+        String postfixExpected = "avg2 4 6";
+        String postfixResult = CommandParser.parse(expression);
+        System.out.println("postfix result: " + postfixResult);
+        assert postfixResult.equals(postfixExpected);
+        Double res = CommandParser.eval(postfixResult);
+        System.out.println(res);
+        assert res == 5.0;
+
+    }
+    public static void test26() {
+        String expression = "avg(4,6,8)";
+        String postfixExpected = "avg3 4 6 8";
+        String postfixResult = CommandParser.parse(expression);
+        System.out.println("postfix result: " + postfixResult);
+        assert postfixResult.equals(postfixExpected);
+        Double res = CommandParser.eval(postfixResult);
+        System.out.println(res);
+        assert res == 6.0;
+
+    }
+
+
+    }
