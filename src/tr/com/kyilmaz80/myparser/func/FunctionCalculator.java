@@ -134,7 +134,9 @@ public class FunctionCalculator implements Calculator{
     @Override
     public void listMathFunction() {
         System.out.println(Bundle.get().getString("fc_print1"));
-        for (MathFunction function : functions)
-            System.out.println(function.getName());
+        for (MathFunction function : functions) {
+            System.out.print(function.getName() + " | ");
+        }
+        System.out.println();
     }
 }

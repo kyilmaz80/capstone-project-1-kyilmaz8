@@ -1,4 +1,6 @@
 package tr.com.kyilmaz80.myparser;
+import tr.com.kyilmaz80.myparser.func.FunctionCalculator;
+import tr.com.kyilmaz80.myparser.func.FunctionCalculatorFactory;
 import tr.com.kyilmaz80.myparser.utils.StringUtils;
 import java.util.Scanner;
 
@@ -6,7 +8,8 @@ public class Menu {
     public static void printHeader() {
         System.out.println(Bundle.get().getString("menu_header1"));
         System.out.println(Bundle.get().getString("menu_header2"));
-        System.out.println(Bundle.get().getString("menu_header3"));
+        //System.out.println(Bundle.get().getString("menu_header3"));
+        FunctionCalculatorFactory.getInstance().listMathFunction();
         System.out.println(Bundle.get().getString("menu_header4"));
     }
 
