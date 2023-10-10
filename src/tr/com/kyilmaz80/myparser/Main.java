@@ -12,6 +12,10 @@ public class Main {
             if (command.equalsIgnoreCase(Constants.COMMAND_EXIT)) {
                 break;
             }
+            if (command.isEmpty()) {
+                System.out.println(Bundle.get().getString("main_print1"));
+                continue;
+            }
             String parsedCommand = CommandParser.parse(command);
             if (parsedCommand == null) {
                 String message =  Bundle.get().getString("main_err1");
