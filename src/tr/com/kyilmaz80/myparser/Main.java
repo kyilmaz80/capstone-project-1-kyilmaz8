@@ -16,14 +16,14 @@ public class Main {
                 System.out.println(Bundle.get().getString("main_print1"));
                 continue;
             }
-            String parsedCommand = CommandParser.parse(command);
+            String parsedCommand = ExpressionParser.parse(command);
             if (parsedCommand == null) {
                 String message =  Bundle.get().getString("main_err1");
                 System.out.println(message);
                 continue;
             }
             Menu.printOutput();
-            Double result = CommandParser.eval(parsedCommand);
+            Double result = ExpressionEvaluator.eval(parsedCommand);
             System.out.println(result);
         } while (true);
         Menu.exit();
